@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+    <mapper namespace="AdminQuestion">
+    
+   <select id="selectQuestionCnt" resultType="int">
+   SELECT COUNT(*) FROM (
+      SELECT q.* FROM tb_questionboard q, tb_user u
+      WHERE u.uno = q.qbuno
+      <if test="searchKinds == 'qbWriter' and searchKinds != null">
+      AND u.unick LIKE '%' || #{searchText} || '%'
+      </if>
+      ) sq
+      <trim prefix= "WHERE" prefixOverrides="AND">
+            <if test='searchKinds == "qbTitle" and searchKinds != null'>
+            AND sq.qbtitle LIKE '%' || #{searchText} || '%'
+            </if>
+            <if test='searchKinds == "qbWrittenDate" and searchKinds != null'>
+            AND sq.qbwrittendate LIKE '%' || #{searchText} || '%'
+            </if>
+      </trim>
+   
+   </select>
+   
+   <select id="selectQuestionList" resultMap="QUESTIONBOARDLIST">
+          SELECT qbno, qbtitle, qbwrittendate, qbisdel, qbstatus, unick FROM (
+            SELECT rownum rnum,q1.*FROM(
+               SELECT * FROM tb_questionboard q, tb_user u WHERE u.uno = q.qbuno ORDER BY q.qbno DESC
+               )q1 
+            <trim prefix= "WHERE" prefixOverrides="OR">
+            <if test='searchKinds == "qbTitle" and searchKinds != null'>
+            OR qbtitle LIKE '%' || #{searchText} || '%'
+            </if>
+            <if test='searchKinds == "qbWrittenDate" and searchKinds != null'>
+            OR qbwrittendate LIKE '%' || #{searchText} || '%'
+            </if>
+            <if test='searchKinds == "qbWriter" and searchKinds != null'>
+            OR unick LIKE '%' || #{searchText} || '%'
+            </if>
+            </trim>
+            )
+            WHERE rnum between #{paging.start} and #{paging.end}
+      </select>
+      
+   <select id="selectQuestionByQbNo" resultType="HashMap">
+         SELECT q.*, a.*, u.unick   
+         FROM tb_questionboard q, tb_answerboard a, tb_user u
+         WHERE q.qbno = a.abqbno
+         AND q.qbuno = u.uno
+         AND q.qbno = #{qbNo}
+   </select>
+   
+   <select id="selectOnlyQuestionByQbNo" resultType="HashMap">
+         SELECT q.*, u.unick   
+         FROM tb_questionboard q, tb_user u
+         WHERE q.qbuno = u.uno
+         AND q.qbno = #{qbNo}
+   </select>
+   
+   <select id="selectQuestionFileByQbNo" resultType="QUESTIONFILE">
+         SELECT qfno, qforiginfilename, qfstoredfilename, qfsize, qfsavepath FROM tb_questionfile
+         WHERE qfqbno = #{qbNo} 
+   </select>
+   
+   <select id="selectAnswerFileByAbNo" resultType="ANSWERFILE">
+         SELECT afno, aforiginfilename, afstoredfilename, afsize, afsavepath FROM tb_answerfile
+         WHERE afabno = #{abNo} 
+   </select>
+      
+   <select id="selectWriteAbNo" resultType="int">
+         SELECT tb_answerboard_seq.CURRVAL 
+         FROM DUAL
+   </select>
+   
+   <insert id="insertAnswer">
+         INSERT INTO tb_answerboard
+         (abuno, abqbno, abtitle, abcontent)
+         VALUES
+         (#{abUno}, #{abQbNo}, #{abTitle}, #{abContent})
+   </insert>
+   
+   
+   <insert id="insertAnswerFile">
+         INSERT INTO tb_answerfile
+         (afabno, aforiginfilename, afstoredfilename, afsize, afsavepath)
+         VALUES
+         (#{afAbNo}, #{originFileName}, #{storedFileName}, #{fileSize}, #{savePath})
+   </insert>
+   
+   <update id="updateQuestionStatus">
+         UPDATE tb_questionboard
+         <set>
+            qbstatus = 1
+         </set>
+         WHERE qbno = #{abQbNo}
+   </update>
+   
+   <update id="updateAnswer">
+         UPDATE tb_answerboard
+         <set>
+            abtitle = #{abTitle},
+            abcontent = #{abContent}
+         </set>
+         WHERE abno = #{abNo}
+   </update>
+   
+   <select id="selectAnswerFile" resultType="HashMap">
+      SELECT
+          *
+          FROM tb_answerfile
+          WHERE afno = #{afNo}
+   </select>
+   
+   <delete id="deleteAnswerFile">
+      DELETE FROM 
+             tb_answerfile 
+          WHERE afno = #{afNo}
+   </delete>
+   
+   <delete id="deleteAnswer">
+         DELETE tb_answerboard
+         WHERE abno = #{abNo}
+   </delete>
+   
+   <delete id="deleteAnswerFileByAbNo">
+         DELETE tb_answerfile
+         WHERE afabno=#{abNo}
+   </delete>
+   
+   <delete id="deleteQuestion">
+         DELETE tb_questionboard
+         WHERE qbno = #{qbNo}
+   </delete>
+   
+   <delete id="deleteQuestionFileByQbNo">
+         DELETE tb_questionfile
+         WHERE qfqbno=#{qbNo}
+   </delete>
+   
+   <update id="updateQuestionDelStatus">
+         UPDATE tb_questionboard
+         <set>
+            qbstatus = 0
+         </set>
+         WHERE qbno = #{qbNo}
+   </update>
+   
+   <select id="selectAbNoByQbNo" resultType="String">
+         SELECT abno FROM tb_answerboard
+         WHERE abqbno = #{qbNo}
+   </select>
+   
+   <select id="selectQbNoByAbNo" resultType="int">
+         SELECT abqbno FROM tb_answerboard
+         WHERE abno = #{abNo}
+   </select>
+   
+   
+   
+   
+   <resultMap type="com.DongHang_ComeFunny.www.model.vo.QuestionBoard" id="QUESTIONBOARDLIST">
+          <result property="qbNo" column="qbno"/>
+          <result property="qbTitle" column="qbtitle"/>
+          <result property="qbWrittenDate" column="qbwrittendate"/>
+          <result property="qbHitsCnt" column="qbhitscnt"/>
+          <result property="qbIsDel" column="qbisdel"/>
+          <result property="qbStatus" column="qbstatus"/>
+          <result property="qbWriter" column="unick"/>
+       </resultMap>
+   
+    </mapper>

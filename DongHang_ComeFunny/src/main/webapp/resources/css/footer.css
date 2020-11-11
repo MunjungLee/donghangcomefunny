@@ -1,0 +1,67 @@
+@charset "UTF-8";
+
+/* 가운데 정렬 */
+body {
+   margin: 0 auto;
+}
+
+/* a태그 속성 없애기 */
+a {
+   text-decoration: none;
+}
+
+/* footer디자인 */
+
+#footer {
+	border: 1px solid rgb(3, 88, 140);
+	background: rgb(3, 88, 140);
+	height: 250px;
+	width: auto;
+	min-width: 1200px;
+	margin-top: 70px;
+}
+
+/* 푸터안에 있는 메뉴 위치조정 */
+#footer .links {
+ 	display: flex;
+ 	align-items: center;
+    justify-content: center;
+    width: auto;
+    font-size: 0;
+    white-space: nowrap;
+    text-align: center;
+    padding-top: 115px;
+}
+
+#footer .links li:first-child {
+    padding: 0;
+    margin: 0;
+}
+
+#footer .links li {
+    position: relative;
+    display: inline-block;
+    color: #999;
+    line-height: 18px;
+    padding-left: 14px;
+    margin-left: 14px;
+    vertical-align: top;
+}
+
+#footer .links li a {
+    color: #ffff;
+    font-size: 12px;
+    letter-spacing: -0.5px;
+}
+
+
+/* 푸터 | 구별 */
+#footer .links .footer_menu:before {
+    position: absolute;
+    top: 4px;
+    left: 0; 
+    width: 1px;
+    height: 12px;
+    background: #dcdcdc;
+   content: '|'; 
+}

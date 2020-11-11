@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+  
+<!-- 0. 2번째 줄에 DOCTYPE 추가 -->
+
+<!-- 1. configuration 태그 작성 -->
+<configuration>
+	<!-- 2. settings 태그에 DB컬럼명을 Camel표기법으로 변경 : mapUnderscoreToCamelCase
+		 및 null값 들어간 경우 exception 처리 : jdbcTypeForNull  -->
+	<!-- DB컬럼명을 JAVA의 Camel표기법으로 변경 -->
+	<settings>
+		<setting name="jdbcTypeForNull" value="NULL"/>
+		<setting name="mapUnderscoreToCamelCase" value="true" />
+	</settings>
+	<!-- 3. 클래스명에 별칭 지정하여 mapper.xml에서 resultType에 입력시 별칭으로 호출 할 수 있는 설정 -->
+	<!-- typeAlias 지정시 type에 해당 패키지명.클래스명  alias=별명 지정
+		 주의 : typeAlias 지정시 주석 해제-->
+	<!-- 
+	<typeAliases>
+		<typeAlias type="com.DongHang_ComeFunny.www.member.model.vo.Member" alias="MEMBER"/>
+		<typeAlias type="com.DongHang_ComeFunny.www.board.model.vo.Notice" alias="BOARD"/>
+	</typeAliases>
+	 -->
+	<!-- 4. mapper를 인식시켜주는 설정 -->
+	<!-- '/mybatis/mapper/ㅇㅇㅇMapper.xml 으로 지정
+		 추가될떄마다 resource 태그 추가 -->
+	<mappers>
+		<mapper resource="/mybatis/mapper/memberMapper.xml" />
+<!-- 		<mapper resource="/mybatis/mapper/noticeMapper.xml" /> -->
+	</mappers>
+
+
+</configuration>

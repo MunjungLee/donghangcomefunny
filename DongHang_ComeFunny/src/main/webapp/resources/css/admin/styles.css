@@ -1,0 +1,11 @@
+@import "community/header.css";
+@import "community/footer.css";
+@import "community/freelist.css";
+@import "community/freeview.css";
+@import "community/freewrite.css";
+@import "community/freemodify.css";
+@import "community/reviewlist.css";
+@import "community/reviewview.css";
+@import "community/reviewwrite.css";
+@import "community/reviewmodify.css";
+@import "community/reviewfinddh.css";

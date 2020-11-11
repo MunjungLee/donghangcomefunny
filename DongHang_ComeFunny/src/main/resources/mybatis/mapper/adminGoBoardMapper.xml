@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+    <mapper namespace="AdminGoBoard">
+    	<select id="selectGoBoardCnt" resultType="int">
+    		SELECT COUNT(*) FROM  
+    			(SELECT g.* FROM  tb_goboard g, tb_user u
+    				WHERE u.uno = g.gbuno
+    				<if test='searchKinds == "gbWriter" and searchKinds != null'>
+					AND u.unick LIKE '%' || #{searchText} || '%'
+					</if>) sg
+			<trim prefix= "WHERE" prefixOverrides="AND">
+				<if test='searchKinds == "gbTitle" and searchKinds != null'>
+				AND sd.gbtitle LIKE '%' || #{searchText} || '%'
+				</if>
+				<if test='searchKinds == "gbWrittenDate" and searchKinds != null'>
+				AND sd.gbwrittendate LIKE '%' || #{searchText} || '%'
+				</if>
+				<if test='searchKinds == "gbRecruitstatus" and searchKinds != null'>
+				AND sd.gbrecruitstatus LIKE '%' || #{searchText} || '%'
+				</if>
+			</trim>
+    	
+    	</select>
+    	
+    	
+    	
+    	<select id="selectGoBoardList" resultMap="GOBOARDLIST">
+		 	SELECT gbno, gbtitle, gbwrittendate, gbisdel, gbrecruitstatus, unick FROM (
+			SELECT rownum rnum,g1.*FROM(
+			SELECT * FROM tb_goboard g, tb_user u WHERE u.uno = g.gbuno ORDER BY g.gbno DESC) g1 
+			<trim prefix= "WHERE" prefixOverrides="OR">
+				<if test='searchKinds == "gbTitle" and searchKinds != null'>
+				OR gbtitle LIKE '%' || #{searchText} || '%'
+				</if>
+				<if test='searchKinds == "gbWrittenDate" and searchKinds != null'>
+				OR gbwrittendate LIKE '%' || #{searchText} || '%'
+				</if>
+				<if test='searchKinds == "gbRecruitStatus" and searchKinds != null'>
+				OR gbrecruitstatus LIKE '%' || #{searchText} || '%'
+				</if>
+				<if test='searchKinds == "gbWriter" and searchKinds != null'>
+				OR unick LIKE '%' || #{searchText} || '%'
+				</if>
+			</trim>
+			)
+			WHERE rnum between #{paging.start} and #{paging.end}
+		</select>
+		
+		<delete id="deleteGoBoard">
+			DELETE tb_goboard
+			WHERE gbno = #{gbNo}
+		</delete>
+		
+		<select id="selectGoUserInfo" resultType="Map">
+            select BOARD.*, U.userId, U.unick, U.ugender, (to_char(sysdate,'YYYY')-substr(U.ubirth,1,4)+1)age, UF.ufstoredfilename
+         from tb_goboard BOARD 
+             join tb_user U on BOARD.gbuno = U.uno  
+             left join tb_userfile UF on UF.ufuno = U.uno  
+         where gbno = #{gbNo }
+      </select>
+      
+       <select id="selectGocheck" resultType="GoCheck">
+            select * from tb_gocheck where gcgbno = #{gbNo }
+      </select>
+      
+       <select id="selectGochklist" resultType="Map">
+        select gcgbno, LISTAGG(gcvalue, ',') WITHIN group(order by gcvalue) as gcvalue2
+        from tb_gocheck
+        where gcgbno = #{gbNo }
+        group by gcgbno
+    </select>
+    
+     <select id="selecthostReviewCnt" resultType="int">
+            select count(*)
+            from tb_reviewboard
+            where  rbgbno = #{gbNo }
+      </select>
+      
+      <select id="selectGoHostReview" resultType="hashmap">
+            select *
+         from (
+             select rownum rnum, n1.*
+             from(
+                 select RBOARD.rbcontent, RBOARD.rbhoststar, RBOARD.rbwrittendate, U.userid, UF.ufstoredfilename
+                FROM tb_reviewboard RBOARD
+                join tb_user U on RBOARD.rbuno = U.uno
+                left join tb_userfile UF on UF.ufuno = U.uno
+                where RBOARD.rbgbno = #{gbNo }
+                order by RBOARD.rbhoststar DESC
+             )n1
+         )
+         WHERE rnum BETWEEN 1 AND 3
+      </select>
+      
+      <select id="selectgoDhApplylist" resultType="Map"> 
+            select GOAPPLY.gastatus, GOAPPLY.gauno, U.userId, u.ugender, (to_char(sysdate,'YYYY')-substr(U.ubirth,1,4)+1)age, UF.ufstoredfilename
+         from tb_goapply GOAPPLY 
+             join tb_user U on GOAPPLY.gauno = U.uno  
+             left join tb_userfile UF on UF.ufuno = U.uno  
+         where gagbno = #{gbNo }
+      </select>
+		
+		
+		
+		
+    	<resultMap type="com.DongHang_ComeFunny.www.model.vo.GoBoard" id="GOBOARDLIST">
+    		<result property="gbNo" column="gbno"/>
+    		<result property="gbTitle" column="gbtitle"/>
+    		<result property="gbWrittenDate" column="gbWrittendate"/>
+    		<result property="gbIsDel" column="gbisdel"/>
+    		<result property="gbRecruitStatus" column="gbrecruitstatus"/>
+    		<result property="gbWriter" column="unick"/>
+    	</resultMap>
+    
+    </mapper>

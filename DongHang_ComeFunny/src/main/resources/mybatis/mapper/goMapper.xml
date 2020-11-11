@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="GO">
+
+	<!-- goboard 삽입 -->
+	<insert id="insertgoboard" > <!-- //nextval -->
+		insert into tb_goboard(GBUNO, GBTITLE, GBCONTENT,
+		GBRECRUITDATE, GBRECRUITAREA,
+		GBRECRUITSTATUS, GBRECRUITNUMBER, GBRECRUITGENDER)
+		values (
+			#{gbUNo},
+			#{gbTitle},
+			#{gbContent},
+			#{gbRecruitDate},
+			#{gbRecruitArea},
+			#{gbRecruitStatus},
+			#{gbRecruitNumber},
+			#{gbRecruitGender}
+		)
+	</insert>
+	
+	<!-- gocheck 삽입 -->
+	<insert id="insertgoage"> <!-- //currval -->
+	    <foreach collection="list" item="age" separator=" " open="INSERT ALL" close="SELECT * FROM DUAL">
+          	INTO tb_gocheck (GCGBNO, GCCATE, GCVALUE)         
+            VALUES(tb_goboard_SEQ.CURRVAL, 'age', #{age})
+       </foreach>
+	</insert>
+	
+	<insert id="insertgotheme"> 
+	    <foreach collection="list" item="theme" separator=" " open="INSERT ALL" close="SELECT * FROM DUAL">
+            INTO tb_gocheck (GCGBNO, GCCATE, GCVALUE)         
+            VALUES(tb_goboard_SEQ.CURRVAL, 'theme', #{theme})
+       </foreach>
+	</insert>
+	
+	
+	<!-- ********함께가요 리스트 ******** -->
+	<select id="selectlist2" resultType="hashmap">
+		Select
+		    u.uno, u.userid, u.unick, uf.uforiginfilename, uf.ufstoredfilename,
+			g.gbno, g.gbtitle, g.gbwrittendate, g.gbrecruitdate, g.gbrecruitarea, g.gbrecruitstatus, g.gbrecruitgender, g.gblikecnt,
+		    agecheck.*, themecheck.*
+		From tb_goboard g
+			left outer join tb_user u on g.gbuno = u.uno
+			left outer join tb_userfile uf on u.uno = uf.ufuno
+			left outer join (select gcgbno, LISTAGG(gcvalue, ',') WITHIN GROUP (order by gcvalue) as agecheck
+								from tb_gocheck where gccate='age' group by gcgbno) agecheck on g.gbno = agecheck.gcgbno
+			left outer join (select gcgbno, LISTAGG(gcvalue, ',') WITHIN GROUP  (order by gcvalue) as themecheck
+			from tb_gocheck where gccate='theme' group by gcgbno) themecheck on g.gbno = themecheck.gcgbno
+		where u.uisleave = 0 and g.gbisdel = 0  
+		and gbrecruitdate = #{date}
+   		and gbrecruitarea = #{area}
+    	and agecheck like '%' || #{age} || '%' 
+    	and themecheck like '%' || #{theme} || '%' 
+		order by g.gbwrittendate desc
+	</select>	
+	
+	<!-- golist 전체 출력(default 최신순) -->
+	<select id="selectlist" resultType="hashmap">
+		Select
+		    u.uno, u.userid, u.unick, uf.uforiginfilename, uf.ufstoredfilename,
+			g.gbno, g.gbtitle, g.gbwrittendate, g.gbrecruitdate, g.gbrecruitarea, g.gbrecruitstatus, g.gbrecruitgender, g.gblikecnt,
+		    agecheck.*, themecheck.*
+		From tb_goboard g
+			left outer join tb_user u on g.gbuno = u.uno
+			left outer join tb_userfile uf on u.uno = uf.ufuno
+			left outer join (select gcgbno, LISTAGG(gcvalue, ',') WITHIN GROUP (order by gcvalue) as agecheck
+								from tb_gocheck where gccate='age' group by gcgbno) agecheck on g.gbno = agecheck.gcgbno
+			left outer join (select gcgbno, LISTAGG(gcvalue, ',') WITHIN GROUP  (order by gcvalue) as themecheck
+			from tb_gocheck where gccate='theme' group by gcgbno) themecheck on g.gbno = themecheck.gcgbno
+		where u.uisleave = 0 and g.gbisdel = 0  
+		order by g.gbwrittendate desc
+	</select>
+	
+	<!-- 검색기능 (리다이렉트) -->
+	<select id="selectgosearch" resultType="hashmap">
+		Select
+		    u.uno, u.userid, u.unick, uf.uforiginfilename, uf.ufstoredfilename,
+			g.gbno, g.gbtitle, g.gbwrittendate, g.gbrecruitdate, g.gbrecruitarea, g.gbrecruitstatus, g.gbrecruitgender, g.gblikecnt,
+		    agecheck.*, themecheck.*
+		From tb_goboard g
+			left outer join tb_user u on g.gbuno = u.uno
+			left outer join tb_userfile uf on u.uno = uf.ufuno
+			left outer join (select gcgbno, LISTAGG(gcvalue, ',') WITHIN GROUP (order by gcvalue) as agecheck
+								from tb_gocheck where gccate='age' group by gcgbno) agecheck on g.gbno = agecheck.gcgbno
+			left outer join (select gcgbno, LISTAGG(gcvalue, ',') WITHIN GROUP  (order by gcvalue) as themecheck
+			from tb_gocheck where gccate='theme' group by gcgbno) themecheck on g.gbno = themecheck.gcgbno
+		where u.uisleave = 0 and g.gbisdel = 0  
+		and g.gbtitle || g.gbcontent LIKE '%' || #{searchText}  || '%'
+		order by g.gbwrittendate desc
+	</select>
+	
+	<!-- AJAX검색 -->
+	<select id="selectfilter" resultType="hashmap">
+		Select
+		    u.uno, u.userid, u.unick, uf.uforiginfilename, uf.ufstoredfilename,
+			g.gbno, g.gbtitle, g.gbwrittendate, g.gbrecruitdate, g.gbrecruitarea, g.gbrecruitstatus, g.gbrecruitgender, g.gblikecnt,
+		    agecheck.*, themecheck.*
+		From tb_goboard g
+			left outer join tb_user u on g.gbuno = u.uno
+			left outer join tb_userfile uf on u.uno = uf.ufuno
+			left outer join (select gcgbno, LISTAGG(gcvalue, ',') WITHIN GROUP (order by gcvalue) as agecheck
+								from tb_gocheck where gccate='age' group by gcgbno) agecheck on g.gbno = agecheck.gcgbno
+			left outer join (select gcgbno, LISTAGG(gcvalue, ',') WITHIN GROUP  (order by gcvalue) as themecheck
+			from tb_gocheck where gccate='theme' group by gcgbno) themecheck on g.gbno = themecheck.gcgbno
+		where u.uisleave = 0 and g.gbisdel = 0  
+		and g.gbtitle || g.gbcontent LIKE '%' || #{searchText}  || '%'
+				<if test="!area.isEmpty()"> <!-- 지역 -->
+				and (
+					gbrecruitarea IN 
+      				<foreach item="item" index="index" collection="area" open="(" separator="," close=")">
+      					  #{item}
+        			</foreach>
+					)
+				</if>	
+				<if test="!state.isEmpty()"> <!-- 상태 -->
+				and (
+					gbrecruitstatus IN 
+      				<foreach item="item" index="index" collection="state" open="(" separator="," close=")">
+      					  #{item}
+        			</foreach>
+					)
+				</if>
+				<if test="!gender.isEmpty()"> <!-- 성별 -->
+				and (
+					gbrecruitgender IN 
+      				<foreach item="item" index="index" collection="gender" open="(" separator="," close=")">
+      					  #{item}
+        			</foreach>
+					)
+				</if>
+				<if test="!age.isEmpty()"> <!-- 연령대 -->
+				and (
+      				<foreach item="item" index="index" collection="age" separator=" or " >
+      					  agecheck like '%' || #{item} || '%' 
+        			</foreach>
+					)
+				</if>	
+				<if test="!theme.isEmpty()"> <!-- 여행타입 -->
+				and (
+      				<foreach item="item" index="index" collection="theme" separator=" or " >
+      					themecheck like '%' || #{item} || '%' 
+        			</foreach>
+					)
+				</if>			
+		order by g.gbwrittendate desc
+		</select>
+		
+		
+	 	<!-- 함께가요 상세 글 정보, 작성자 프로필 이미지 -->
+	   <select id="selectGoUserInfo" resultType="Map">
+	         select BOARD.*, U.userId, U.unick, U.ugender, (to_char(sysdate,'YYYY')-substr(U.ubirth,1,4)+1)age, UF.ufstoredfilename
+	      from tb_goboard BOARD 
+	          join tb_user U on BOARD.gbuno = U.uno  
+	          left join tb_userfile UF on UF.ufuno = U.uno  
+	      where gbno = #{gbNo }
+	   </select>
+   
+	   <!-- 함께가요 찜목록 클릭 여부 -->
+	   <select id="selectGoLikeStatus" resultType="int">
+	         select count(*) 
+	         from tb_golike 
+	         where gluno = #{uNo } and glgbno = #{gbNo }
+	   </select>
+   
+   	<!-- check박스 변형해서 가지고오기 -->
+    <select id="selectGochklist" resultType="Map">
+        select gcgbno, LISTAGG(gcvalue, ',') WITHIN group(order by gcvalue) as gcvalue2
+        from tb_gocheck
+        where gcgbno = #{gbNo }
+        group by gcgbno
+    </select>
+    
+	   <!-- 함께가요 상세 체크박스 -->
+	   <select id="selectGocheck" resultType="GoCheck">
+	         select * from tb_gocheck where gcgbno = #{gbNo }
+	   </select>
+   
+	   <!-- 함꼐가요 호스트 평점 -->
+	   <select id="selectGoHostReview" resultType="hashmap">
+	         select *
+	      from (
+	          select rownum rnum, n1.*
+	          from(
+	              select RBOARD.rbcontent, RBOARD.rbhoststar, RBOARD.rbwrittendate, U.userid, UF.ufstoredfilename
+	             FROM tb_reviewboard RBOARD
+	             join tb_user U on RBOARD.rbuno = U.uno
+	             left join tb_userfile UF on UF.ufuno = U.uno
+	             where RBOARD.rbgbno = #{gbNo }
+	             order by RBOARD.rbhoststar DESC
+	          )n1
+	      )
+	      WHERE rnum BETWEEN 1 AND 3
+	   </select>
+   
+	   <!-- 함께가요 호스트 평점 갯수 -->
+	   <select id="selecthostReviewCnt" resultType="int">
+	         select count(*)
+	         from tb_reviewboard
+	         where  rbgbno = #{gbNo }
+	   </select>
+   
+	   <!-- 함께가요 동행 신청 -->
+	   <insert id="insertGoDhApply">
+	         insert into tb_goapply(GAGBNO, GAUNO, GASTATUS)
+	      values(#{gbNo }, #{uNo }, 0)
+	   </insert>
+   
+	   <!-- 함께가요 동행 신청 목록 -->
+	   <select id="selectgoDhApplylist" resultType="Map"> 
+	         select GOAPPLY.gastatus, GOAPPLY.gauno, U.userId, u.ugender, (to_char(sysdate,'YYYY')-substr(U.ubirth,1,4)+1)age, UF.ufstoredfilename
+	      from tb_goapply GOAPPLY 
+	          join tb_user U on GOAPPLY.gauno = U.uno  
+	          left join tb_userfile UF on UF.ufuno = U.uno  
+	      where gagbno = #{gbNo }
+	   </select>
+   
+	   <!-- 함꼐가요 새로운 동행 추가 조회 -->
+	   <select id="selectGoNewApply"  resultType="Map">
+	      select *
+	       from (
+	         select rownum rnum, n1.*
+	           from(
+	             select GOAPPLY.gastatus,GOAPPLY.gauno, U.userId, u.ugender, (to_char(sysdate,'YYYY')-substr(U.ubirth,1,4)+1)age, UF.ufstoredfilename
+	         from tb_goapply GOAPPLY 
+	             join tb_user U on GOAPPLY.gauno = U.uno  
+	             left join tb_userfile UF on UF.ufuno = U.uno  
+	         where gagbno = #{gbNo } and gauno = #{uNo }
+	          )n1
+	      )
+	      WHERE rnum = 1
+	   </select>
+   
+	   <!-- 함께가요 동행 수락 -->
+	   <update id="updateGoApplyOkStatus">
+	         update tb_goapply
+	      set gastatus = 1
+	      where gagbno = #{gbNo } and gauno = #{gaUNo }
+	   </update>
+   
+	    <!-- 함께가요 동행 거절 -->
+	   <update id="updateGoApplyNoStatus">
+	         update tb_goapply
+	      set gastatus = 2
+	      where gagbno = #{gbNo } and gauno = #{gaUNo }
+	   </update>
+   
+	   <!-- 함께가요 찜목록 추가 -->
+	   <insert id="insertGoLike">
+	         insert into tb_golike(glgbno, gluno)
+	      values (#{gbNo }, #{uNo })   
+	   </insert>
+	   
+	   <!-- 함께가요 찜목록 삭제 -->
+	   <delete id="DeleteGoLike">
+	         delete from tb_golike
+	         where glgbno = #{gbNo } and gluno = #{uNo }
+	   </delete>
+     
+     <!-- 함께가요 찜 수 증가 -->
+	   <update id="GBlikeUpCnt">
+	         update tb_goboard
+	         set gblikecnt = gblikecnt + 1
+	         where gbno = #{gbNo }
+	   </update>
+	   
+	   <!-- 함께가요 찜 수 감소 -->
+	   <update id="GBlikeDownCnt">
+	         update tb_goboard
+	         set gblikecnt = gblikecnt- 1
+	         where gbno = #{gbNo }
+	   </update>
+
+		<!-- 함께가요 게시물 인원수 확인 -->
+		<select id="selectGBrecruitnumber" resultType="int">
+			select gbrecruitnumber
+			from tb_goboard
+			where gbNo = #{gbNo }
+		</select>
+
+
+		<select id="selectGrecruitcnt" resultType="int">
+			select count(*) from tb_goapply
+			where gagbno = #{gbNo } and gastatus = 1
+		</select>
+
+		<update id="updateGBrecruitCnt">
+			update tb_goboard
+			set gbrecruitcnt = gbrecruitcnt + 1
+			where gbNo = #{gbNo }
+		</update>
+	   
+	   <!-- goboard 삭제 -> gbisdel = 1 로 update -->
+	   <update id="deleteGoboard">
+	         update tb_goboard
+	      set gbisdel = 1
+	      where gbno = #{gbNo }
+	   </update>
+	
+		
+		<!-- goboard 수정 -->
+		<update id="updategoboard" > 
+			update tb_goboard
+			set 
+				gbtitle = #{gbTitle}, 
+				gbcontent = #{gbContent},
+				gbrecruitstatus= #{gbRecruitStatus}
+			where gbno = #{gbNo}
+		</update>	
+
+		
+				
+</mapper>

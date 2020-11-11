@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="USER">
+	<select id = "selectMember" resultType="USER">
+		SELECT
+			uno, userid, upw, uname, ubirth, ugender, unick, uphone, umail, uaddress, udhtcnt, uregdate
+		FROM
+			tb_user
+		WHERE
+			userid = #{id} AND uisleave = 0
+	</select>
+	
+	<insert id="insertUser">
+		INSERT INTO tb_user (userid, upw, uname, ubirth, ugender, unick, uphone, umail, uaddress)
+		VALUES (#{userId}, #{uPw}, #{uName}, #{uBirth}, #{uGender}, #{uNick}, #{uPhone}, #{uMail}, #{uAddress} )
+	</insert>	
+	
+	<!-- 카카오 아이디가 아닌 계정 로그인 -->
+	<select id = "selectNKMember" resultType="USER">
+		SELECT
+			uno, userid, upw, uname, ubirth, ugender, unick, uphone, umail, uaddress, udhtcnt, uregdate
+		FROM
+			tb_user
+		WHERE
+			userid = #{id} AND uisleave = 0 AND userid NOT LIKE 'kakao\_%'
+	</select>
+	
+	<!-- 카카오 아이디로 회원가입 -->	
+	<insert id="insertKakaoUser">
+		INSERT INTO tb_user (userid, upw, uname, ubirth, ugender, unick, uphone, umail, uaddress)
+		VALUES (#{userId}, #{uPw}, #{uName}, #{uBirth}, #{uGender}, #{uNick}, #{uPhone}, #{uMail}, #{uAddress} )
+	</insert>
+	
+	<select id = "selectMemberByUserId" resultType="USER">
+		SELECT
+			uno, userid, upw, uname, ubirth, ugender, unick, uphone, umail, uaddress, udhtcnt, uregdate
+		FROM
+			tb_user
+		WHERE
+			userid = #{id} AND uisleave = 0
+	</select>
+	<select id = "selectMemberByUno" resultType="USER">
+		SELECT
+			uno, userid, upw, uname, ubirth, ugender, unick, uphone, umail, uaddress, udhtcnt, uregdate
+		FROM
+			tb_user
+		WHERE
+			uno = #{uno} AND uisleave = 0
+	</select>
+	<select id = "selectMemberByNick" resultType="USER">	
+	SELECT
+			uno, userid, upw, uname, ubirth, ugender, unick, uphone, umail, uaddress, udhtcnt, uregdate
+		FROM
+			tb_user
+		WHERE
+			unick = #{unick} AND uisleave = 0
+	</select>
+	<update id="UpdataDHBGByUno" parameterType="HashMap">
+		UPDATE tb_user SET udhtcnt = udhtcnt + #{amount} where uno = #{uno}
+	</update>
+	   <!-- 아이디 중복 체크 -->
+	<select id="idChk" parameterType="String" resultType="int">
+	   SELECT COUNT(*) FROM tb_user
+	   WHERE userid = #{userId}
+	</select>
+		<!-- 아이디 찾기 -->
+	<select id="selectFindId" resultType="USER">
+	  SELECT userid FROM tb_user
+	   WHERE uname = #{uName}
+	   AND umail = #{uMail}
+	</select>
+	
+		<!-- 이메일 인증 조건 -->
+	<select id="userChk" resultType="USER">
+	   SELECT uname, userid, umail FROM tb_user
+	   WHERE uname = #{uName}
+	   AND userid = #{userId}
+	   AND umail = #{uMail}
+	</select>
+	   
+	   <!-- 비밀번호 변경 -->
+	<update id="changePassword">
+       UPDATE tb_user SET upw = #{uPw} WHERE userid = #{userId}
+    </update>
+</mapper>

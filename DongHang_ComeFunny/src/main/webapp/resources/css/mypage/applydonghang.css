@@ -1,0 +1,114 @@
+@charset "UTF-8";
+*{
+	padding: 0;
+	margin: 0;
+	
+}
+a,a:link,a:visited,a:hover{
+	font-style : none;
+	text-decoration: none;
+	color:black;
+}
+/* 스위치 버튼 */
+#dongHangBtn{
+	margin: 0% 15%;
+	margin-bottom: 3%;
+}
+#dongHangBtn img{
+	width: 23%;
+}
+#switchBlock1{
+	display: inline-block;
+    width: 10%;
+    height: 2em;
+    position: relative;
+    top: 2.5em;
+    left: 0.3em;
+    cursor: pointer;
+   
+}
+#switchBlock2{
+	display: inline-block;
+    width: 10%;
+    height: 2em;
+    position: relative;
+    top: 2.5em;
+    left: 1.2em; 
+    cursor: pointer;
+}
+
+/* 테이블 */
+#donghangform{
+	width: 70%;
+	margin: 0 auto;
+	min-height: 326px;
+}
+#donghangformTitle{
+	display: inline-block;
+	margin: 2em 0;
+    padding: 0.3em;
+    font-size: 15px;
+    font-weight: bold;
+}
+#deleteBtn{
+	background: #5D7CA6;
+    float: right;
+    margin: 2em 0.3em;
+    height: 2.3em;
+    width: 4.5em;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+}
+#applydonghangtable{
+    border-bottom: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+}
+#applydonghangtable tr th,td{
+	align-content: center;
+	text-align: center;
+}
+#applydonghangtable tr th{
+	background: #ccc;
+	color: #666;
+}
+#applydonghangtable tr:hover a{
+/* 	text-decoration: underline; */
+	cursor: pointer;
+}
+
+#myDongHang {
+	min-height: 479px;
+	min-width: 750px;
+}
+
+/* 각게시판댓글로 이동하는 버튼 */
+#goBtn{
+	background: #73A2BF;
+    margin: 0 0.5em;
+    height: 2em;
+    width: 5.8em;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+/* 	#5D7CA6 */
+/* #023059 */
+/* #03588C */
+/* #73A2BF */
+/* #F2CAA7 */
+}
+#doBtn{
+	background: #ffa352 ;
+    height: 2em;
+    width: 5.8em;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+}
+
+
+
+
+
+
+

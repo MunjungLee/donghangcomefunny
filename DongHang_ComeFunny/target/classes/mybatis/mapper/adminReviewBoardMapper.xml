@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+    <mapper namespace="AdminReviewBoard">
+    	<select id="selectReviewBoardCnt" resultType="int">
+    		SELECT COUNT(*) FROM  
+    			(SELECT r.* FROM  tb_reviewboard r, tb_user u
+    				WHERE u.uno = r.rbuno
+    				<if test='searchKinds == "rbWriter" and searchKinds != null'>
+					AND u.unick LIKE '%' || #{searchText} || '%'
+					</if>) sr
+			<trim prefix= "WHERE" prefixOverrides="AND">
+				<if test='searchKinds == "rbTitle" and searchKinds != null'>
+				AND sr.rbtitle LIKE '%' || #{searchText} || '%'
+				</if>
+				<if test='searchKinds == "rbWrittenDate" and searchKinds != null'>
+				AND sr.rbwrittendate LIKE '%' || #{searchText} || '%'
+				</if>
+			</trim>
+    	
+    	</select>
+    	
+    	
+    	
+    	<select id="selectReviewBoardList" resultMap="REVIEWBOARDLIST">
+		 	SELECT rbno, rbtitle, rbwrittendate, rbisdel, rbhitscnt, rblikecnt, rbrecommendcnt, unick FROM (
+			SELECT rownum rnum,r1.*FROM(
+			SELECT * FROM tb_reviewboard r, tb_user u WHERE u.uno = r.rbuno ORDER BY r.rbno DESC) r1 
+			<trim prefix= "WHERE" prefixOverrides="OR">
+				<if test='searchKinds == "rbTitle" and searchKinds != null'>
+				OR rbtitle LIKE '%' || #{searchText} || '%'
+				</if>
+				<if test='searchKinds == "rbWrittenDate" and searchKinds != null'>
+				OR rbwrittendate LIKE '%' || #{searchText} || '%'
+				</if>
+				<if test='searchKinds == "rbWriter" and searchKinds != null'>
+				OR unick LIKE '%' || #{searchText} || '%'
+				</if>
+			</trim>
+			)
+			WHERE rnum between #{paging.start} and #{paging.end}
+		</select>
+		
+		<delete id="deleteReviewBoard">
+			DELETE tb_reviewboard
+			WHERE rbno = #{rbNo}
+		</delete>
+		
+		<delete id="deleteReviewFileByRbNo">
+			DELETE tb_reviewfile
+			WHERE rfrbno = #{rfRbNo}
+		</delete>
+		
+		<delete id="deleteReviewCommentByRbNo">
+			DELETE tb_reviewcomment
+			WHERE rcrbno = #{rcRbNo}
+		</delete>
+		
+		
+		
+		<select id="selectReviewDetail" resultType="HashMap">
+    		SELECT * FROM 
+    			( SELECT
+    				u.uno, u.userid, u.uname, u.unick, 
+    				r.rbno, r.rbuno, r.rbtitle, r.rbcontent, r.rbwrittendate, r.rbhitscnt, r.rblikecnt, r.rbdhstar, r.rbhoststar, r.rbgbno, r.rbdbno, r.rbrecommendcnt
+    			  FROM tb_user u, tb_reviewboard r 
+    			  WHERE r.rbuno = u.uno
+    			  	AND	u.uisleave = 0
+    			  	AND r.rbisdel = 0
+    			) UR
+    		WHERE rbno = #{rbNo}
+    	</select>
+    	
+    	<select id="selectFileWithReview" resultType="HashMap">
+    		SELECT * FROM
+    			( SELECT
+    				r.rbno, r.rbuno, r.rbtitle, r.rbcontent, r.rbwrittendate, r.rbhitscnt, r.rblikecnt, r.rbdhstar, r.rbhoststar, r.rbgbno, r.rbdbno, r.rbrecommendcnt,
+    				rf.rfno, rf.rfrbno, rf.rforiginfilename, rf.rfstoredfilename, rf.rfsize, rf.rfsavepath
+    			  FROM tb_reviewboard r, tb_reviewfile rf
+    			  WHERE r.rbno = rf.rfrbno
+    			  		AND r.rbisdel = 0
+    			  		AND rf.rfisdel = 0
+    			  	ORDER BY rf.rfno DESC 
+    			) RRF
+    		WHERE rbno = #{rbNo}
+    	</select>
+    	
+    	<select id="selectGoBoardView" resultType="HashMap">
+    		SELECT
+    			gbno AS DHNO, gbtitle AS DHTITLE, gbcategory AS DHCATEGORY, gbdhstaravg AS DHDHSTARAVG, gbhoststaravg AS DHHOSTSTARAVG, gbstarcnt AS DHSTARCNT 
+    		FROM
+    			tb_goboard
+    		WHERE gbno = #{rbGbNo}
+    	</select>
+    	
+    	<select id="selectDoBoardView" resultType="HashMap">
+    		SELECT
+    			dbno AS DHNO, dbtitle AS DHTITLE, dbcategory AS DHCATEGORY, dbdhstaravg AS DHDHSTARAVG, dbhoststaravg AS DHHOSTSTARAVG, dbstarcnt AS DHSTARCNT
+    		FROM
+    			tb_doboard
+    		WHERE dbno = #{rbDbNo}
+    	</select>
+    	
+    	<select id="selectReviewCommentList" resultType = "HashMap">
+            SELECT rownum rnum, URC.* FROM
+				( SELECT
+                    u.uno, u.userid, u.unick, u.uname,
+                    rc.rcno, rc.rcrbno, rc.rcuno, rc.rccontent, rc.rcwrittendate
+                  FROM tb_user u, tb_reviewcomment rc
+                  WHERE rc.rcuno = u.uno
+                  AND rc.rcisdel = 0
+                  AND u.uisleave = 0
+                  ORDER BY rc.rcno
+                ) URC
+            WHERE rcrbno = #{rbNo}
+    	</select>
+    	
+    	<delete id="deleteReviewComment">
+    		DELETE FROM
+    			tb_reviewcomment
+    		WHERE rcno = #{rcNo}
+    	</delete>
+		
+    	<resultMap type="com.DongHang_ComeFunny.www.model.vo.ReviewBoard" id="REVIEWBOARDLIST">
+    		<result property="rbNo" column="rbno"/>
+    		<result property="rbTitle" column="rbtitle"/>
+    		<result property="rbWrittenDate" column="rbWrittendate"/>
+    		<result property="rbIsDel" column="rbisdel"/>
+    		<result property="rbRecommendCnt" column="rbrecommendcnt"/>
+    		<result property="rbLikeCnt" column="rblikecnt"/>
+    		<result property="rbHitsCnt" column="rbhitscnt"/>
+    		<result property="rbWriter" column="unick"/>
+    	</resultMap>
+    
+    </mapper>

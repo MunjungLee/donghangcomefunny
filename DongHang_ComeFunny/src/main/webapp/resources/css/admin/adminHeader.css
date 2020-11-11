@@ -1,0 +1,22 @@
+@charset "UTF-8";
+
+#mainMessage {
+	display: inline-block;
+	position: relative;
+	left: 450px;
+	top: 5px;
+	font-size: 25px;
+	font-weight: bolder;
+}
+
+.main_login {
+	float: right;
+    position: absolute;
+    top: 4%;
+    right: 18.5%;
+    font-size: 16px;
+}
+.main_login a, .main_login a:hover, .main_login a:active, .main_login a:link, .main_login a:visited {
+    text-decoration: none;
+    color : black;
+}

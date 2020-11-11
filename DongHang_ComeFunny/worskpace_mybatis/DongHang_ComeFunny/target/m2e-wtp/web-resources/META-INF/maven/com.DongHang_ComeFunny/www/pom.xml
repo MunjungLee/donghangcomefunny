@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.DongHang_ComeFunny</groupId>
+	<artifactId>www</artifactId>
+	<name>DongHang_ComeFunny</name>
+	<packaging>war</packaging>
+	<version>1.0.0-BUILD-SNAPSHOT</version>
+	<properties>
+		<!-- 1. 자바 버전 및 스프링 버전 변경 -->
+		<!-- 1-1. jave-version 1.6 to 1.8 -->
+		<!-- 1-2. org.springframework-version 3.1.1 to 5.2.6 -->
+		<!-- 1-3. DongHang_ComeFunny 스프링 레거시 프로젝트 우클릭, properties 클릭 
+  			 1-4. 좌네비바에서 위에서 5번째 항목 Java Build Path 클릭
+			 1-5. 창 12시방향에 Libraries 항목 클릭
+			 1-6. JRE System Library[JavaSE-1.8] 클릭 후 우측에 Edit 클릭
+			 1-7. 가운데 박스 안에 Execution environment 드롭다운 클릭
+			 1-8. JavaSE-1.8 (java-1.8.0-openjkd) 선택 후 Finish 클릭
+ 			 1-9. 다시 properties 좌네비바에서 위에서 14번째 항목 Project Facets 클릭
+			 1-10. Dynamic WebModule 4.0으로 수정, Java 1.8로 수정 후 Apply and Close 클릭 -->
+		<java-version>1.8</java-version>
+		<org.springframework-version>5.2.6.RELEASE</org.springframework-version>
+		<org.aspectj-version>1.6.10</org.aspectj-version>
+		<org.slf4j-version>1.6.6</org.slf4j-version>
+	</properties>
+	
+	<!-- 2-5-1.OJDBC6를 위한 repository 설정 -->
+	<!-- dependencies 태그 바로 위에 작성할 것 -->
+	<repositories>
+		<repository>
+        	<id>oracle</id>
+        	<url>http://maven.jahia.org/maven2</url>
+	     </repository>
+	</repositories>
+	
+	
+	<dependencies>
+		<!-- 2. mybatis, Oracle JBDC 관련 디펜던시 추가 -->
+		<!-- 2-1. Commons DBCP -->
+		<!-- DataBase Connection Pool
+		DataBase 연결을 여러개 보관하고 있는 객체 -->
+		<dependency>
+		    <groupId>commons-dbcp</groupId>
+		    <artifactId>commons-dbcp</artifactId>
+		    <version>1.4</version>
+		</dependency>
+		
+		<!-- 2-2. MyBatis 3.4.6 -->
+		<!-- 마이바티스 라이브러리 설치 -->
+		<dependency>
+		    <groupId>org.mybatis</groupId>
+		    <artifactId>mybatis</artifactId>
+		    <version>3.4.6</version>
+		</dependency>
+		
+		<!-- 2-3. MyBatis Spring 1.3.2 -->
+		<!-- 마이바티스와 스프링을 연동시킬 수 있는 라이브러리 설치 -->
+		<dependency>
+		    <groupId>org.mybatis</groupId>
+		    <artifactId>mybatis-spring</artifactId>
+		    <version>1.3.2</version>
+		</dependency>
+		
+		<!-- 2-4.Spring-Orm 5.2.6 -->
+		<!-- MyBatis의 preparedStatement에 일일이 값을 넣지 않고
+			객체를 전송하면  Mapping 시켜주는 dependency -->
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-orm</artifactId>
+		    <version>5.2.6.RELEASE</version>
+		</dependency>
+		
+		<!-- 2-5. ojdbc6 라이브러리 추가 -->
+		<!-- ojdbc6 12.1.0.2 -->
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc6</artifactId>
+			<version>12.1.0.2</version>
+		</dependency>
+		
+		<!-- 3. 파일 업로드 관련 디펜던시 추가 -->
+		<!-- 3-1.Appache Commons IO 2.4-->
+		<dependency>
+		    <groupId>commons-io</groupId>
+		    <artifactId>commons-io</artifactId>
+		    <version>2.4</version>
+		</dependency>
+		<!-- 3-2.Appache commons-fileupload 1.3.1 -->
+		<dependency>
+		    <groupId>commons-fileupload</groupId>
+		    <artifactId>commons-fileupload</artifactId>
+		    <version>1.3.1</version>
+		</dependency>
+		
+		<!-- 4. ajax 사용하기 위한 JSON 관련 디펜던시 추가 -->
+		<!-- 4-1. jackson-core 2.10.2 -->
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-core</artifactId>
+		    <version>2.10.2</version>
+		</dependency>
+		<!-- 4-2. jackson-databind 2.10.2 -->
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		    <version>2.10.2</version>
+		</dependency>
+		
+		<!-- 5. 메일링 서비스 관련 디펜던시 추가 -->
+		<!-- 5-1. 스프링에서 제공 해주는 JavaMailSender를 활용하기 위한
+			Dependency 추가 -->
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-context-support</artifactId>
+		    <version>5.2.6.RELEASE</version>
+		</dependency>
+		<!-- 5-2. JavaMail Api 1.6.2 -->
+		<dependency>
+		    <groupId>com.sun.mail</groupId>
+		    <artifactId>javax.mail</artifactId>
+		    <version>1.6.2</version>
+		</dependency>
+		
+		<!-- Spring -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${org.springframework-version}</version>
+			<exclusions>
+				<!-- Exclude Commons Logging in favor of SLF4j -->
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				 </exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>
+
+		<!-- AspectJ -->
+		<!-- 6. AOP활용을 위한 디펜던시 -->
+		<!-- 6-1. 기존  ${org.aspectj-version}에서  1.9.5로 변경  -->
+		<!-- aspectjweaver와 버전 동일하게 하기 위해서 버전 변경함 -->
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjrt</artifactId>
+			<version>${org.aspectj-version}</version>
+		</dependency>
+		<!-- 6.2 aspectjweaver 1.9.5 -->
+		<dependency>
+		    <groupId>org.aspectj</groupId>
+		    <artifactId>aspectjweaver</artifactId>
+		    <version>1.9.5</version>
+		</dependency>	
+		
+		<!-- Logging -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${org.slf4j-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>${org.slf4j-version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${org.slf4j-version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.15</version>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.mail</groupId>
+					<artifactId>mail</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>javax.jms</groupId>
+					<artifactId>jms</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.sun.jdmk</groupId>
+					<artifactId>jmxtools</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.sun.jmx</groupId>
+					<artifactId>jmxri</artifactId>
+				</exclusion>
+			</exclusions>
+			<scope>runtime</scope>
+		</dependency>
+		
+		<!-- 7. JDBC 쿼리 기록 관련 디펜던시  추가-->
+		<!-- 7-1. log4jdbc-remix 0.2.7 -->
+		<!-- 관련 url : https://code.google.com/archive/p/log4jdbc-remix/ -->
+		<dependency>
+		    <groupId>org.lazyluke</groupId>
+		    <artifactId>log4jdbc-remix</artifactId>
+		    <version>0.2.7</version>
+		</dependency>
+
+		<!-- @Inject -->
+		<dependency>
+			<groupId>javax.inject</groupId>
+			<artifactId>javax.inject</artifactId>
+			<version>1</version>
+		</dependency>
+
+		<!-- 8. servlet-api 2.5에서 4.0으로 변경 -->
+		<!-- 8.1 properties Project Facets에서 Dynamic Web Module
+			 2.5에서 4.0으로 변경한 내용 동기화를 위해 설정 변경 -->	
+		<!-- 기존에 있던 2.5 dependency 내용 삭제 후  4.0.1 추가 -->
+		<!-- artifactId 값이 다름 -->
+		<!-- javax.servlet-api 4.0.1 -->			
+		<!-- Servlet -->
+		<dependency>
+		    <groupId>javax.servlet</groupId>
+		    <artifactId>javax.servlet-api</artifactId>
+		    <version>4.0.1</version>
+		    <scope>provided</scope>
+		</dependency>
+		<!-- 8.2 jsp 버전 변경  2.1 to 2.3 -->
+		<!-- artifactId 값이 다르기 때문에 기존 내용 삭제 후 추가해야함 -->
+		<!-- javax.servlet.jsp-api 2.3 -->
+		<dependency>
+		    <groupId>javax.servlet.jsp</groupId>
+		    <artifactId>javax.servlet.jsp-api</artifactId>
+		    <version>2.3.3</version>
+		    <scope>provided</scope>
+		</dependency>
+		
+		<!-- 8.3jstl tagLibrary은 library를 수동으로 다운로드 후 추가해야함 -->
+		<!-- 8.3-1 https://tomcat.apache.org/download-taglibs.cgi 접속 -->
+		<!-- 8.3-2 아래 3개 파일 다운로드
+			 Impl: taglibs-standard-impl-1.2.5.jar (pgp, sha512)
+			 Spec : taglibs-standard-spec-1.2.5.jar (pgp, sha512)
+			 EL : taglibs-standard-jstlel-1.2.5.jar (pgp, sha512) -->
+		<!-- 8.3-3 lib 폴더 생성 
+		         위 3개항목 다운로드 후  src/main/java/webapp/WEB-INF 안에  lib 폴더 생성 -->
+		<!-- 8.3-4 lib 폴더 안에 3개 파일 복사 붙여넣기 -->
+		<!-- 8.3-5 lib 폴더 안에 ojdbc6.jar 파일도 넣기 
+			 (dependency에서 추가되었다면 불필요)-->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+		</dependency>
+		
+		<!-- 9.Spring security paswword 암호화 -->
+		<!-- 9-1. spring-security-core 5.2.2 -->
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-core</artifactId>
+		    <version>5.2.2.RELEASE</version>
+		</dependency>
+		<!-- 9-2. spring-security-web 5.2.2 -->
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-web</artifactId>
+		    <version>5.2.2.RELEASE</version>
+		</dependency>
+		<!-- 9-3. spring-security-config 5.2.2 -->
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-config</artifactId>
+		    <version>5.2.2.RELEASE</version>
+		</dependency>
+		
+		
+		
+	
+		<!-- Test -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.7</version>
+			<scope>test</scope>
+		</dependency>        
+	</dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-eclipse-plugin</artifactId>
+                <version>2.9</version>
+                <configuration>
+                    <additionalProjectnatures>
+                        <projectnature>org.springframework.ide.eclipse.core.springnature</projectnature>
+                    </additionalProjectnatures>
+                    <additionalBuildcommands>
+                        <buildcommand>org.springframework.ide.eclipse.core.springbuilder</buildcommand>
+                    </additionalBuildcommands>
+                    <downloadSources>true</downloadSources>
+                    <downloadJavadocs>true</downloadJavadocs>
+                </configuration>
+            </plugin>
+          	<!-- 10. maven-compiler-plugin 버전 변경 1.6 -> 1.8 -->
+          	<!-- 10-1. source, target 태그 안에 1.6버전을  1.8버 전으로 변경 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.5.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <compilerArgument>-Xlint:all</compilerArgument>
+                    <showWarnings>true</showWarnings>
+                    <showDeprecation>true</showDeprecation>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <configuration>
+                    <mainClass>org.test.int1.Main</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

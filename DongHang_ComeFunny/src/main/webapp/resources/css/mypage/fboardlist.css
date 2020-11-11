@@ -1,0 +1,127 @@
+@charset "UTF-8";
+*{
+	padding: 0;
+	margin: 0;
+	
+}
+a,a:link,a:visited,a:hover{
+	font-style : none;
+	text-decoration: none;
+	color:black;
+}
+/* 스위치 버튼 */
+#myBoardBtn{
+	margin: 0% 15%;
+	margin-bottom: 3%;
+}
+#myBoardBtn img{
+	width: 35%;
+}
+#switchBlock1{
+	display: inline-block;
+    width: 10%;
+    height: 2em;
+    position: relative;
+    top: 2.5em;
+    left: 0.3em;
+    cursor: pointer;
+   
+}
+#switchBlock2{
+	display: inline-block;
+    width: 10%;
+    height: 2em;
+    position: relative;
+    top: 2.5em;
+    left: 1.2em; 
+    cursor: pointer;
+}
+
+#switchBlock3{
+	display: inline-block;
+    width: 10%;
+    height: 2em;
+    position: relative;
+    top: 2.5em;
+    left: 2em; 
+    cursor: pointer;
+}
+
+/**** 테이블 ******/
+#myBoardForm{
+	width: 70%;
+	margin: 0 auto;
+	min-height: 326px;
+}
+#myBoardFormTitle{
+	display: inline-block;
+	margin: 2em 0;
+    padding: 0.3em;
+    font-size: 15px;
+    font-weight: bold;
+}
+#deleteBtn{
+	background: #5D7CA6;
+    float: right;
+    margin: 2em 0.3em;
+    height: 2.3em;
+    width: 4.5em;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+}
+#myBoardTable{
+    border-bottom: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+}
+#myBoardTable tr th,td{
+	align-content: center;
+	text-align: center;
+}
+#myBoardTable tr th{
+	background: #ccc;
+	color: #666;
+}
+#myBoardTable tr:hover a{
+/* 	text-decoration: underline; */
+	cursor: pointer;
+}
+
+.container{
+	min-width: 750px;
+}
+
+/* 각게시판댓글로 이동하는 버튼 */
+#fcBtn{
+	background: #73A2BF;
+    margin: 0 0.5em;
+    height: 2em;
+    width: 5.8em;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+/* 	#5D7CA6 */
+/* #023059 */
+/* #03588C */
+/* #73A2BF */
+/* #F2CAA7 */
+}
+#rcBtn{
+	background: #ffa352 ;
+    height: 2em;
+    width: 5.8em;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+}
+
+
+
+
+
+
+
+
+
+
+

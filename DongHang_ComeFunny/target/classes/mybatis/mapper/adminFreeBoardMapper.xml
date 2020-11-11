@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+    <mapper namespace="AdminFreeBoard">
+    	<select id="selectFreeBoardCnt" resultType="int">
+    		SELECT COUNT(*) FROM  
+    			(SELECT f.* FROM  tb_freeboard f, tb_user u
+    				WHERE u.uno = f.fbuno
+    				<if test='searchKinds == "fbWriter" and searchKinds != null'>
+					AND u.nick LIKE '%' || #{searchText} || '%'
+					</if>) sf
+			<trim prefix= "WHERE" prefixOverrides="AND">
+				<if test='searchKinds == "dbTitle" and searchKinds != null'>
+				AND sf.fbtitle LIKE '%' || #{searchText} || '%'
+				</if>
+				<if test='searchKinds == "dbWrittenDate" and searchKinds != null'>
+				AND sf.fbwrittendate LIKE '%' || #{searchText} || '%'
+				</if>
+			</trim>
+    	
+    	</select>
+    	
+    	
+    	
+    	<select id="selectFreeBoardList" resultMap="FREEBOARDLIST">
+		 	SELECT fbno, fbtitle, fbwrittendate, fbisdel, fbhitscnt, unick FROM (
+			SELECT rownum rnum,f1.*FROM(
+			SELECT * FROM tb_freeboard f, tb_user u WHERE u.uno = f.fbuno ORDER BY f.fbno DESC) f1 
+			<trim prefix= "WHERE" prefixOverrides="OR">
+				<if test='searchKinds == "fbTitle" and searchKinds != null'>
+				OR fbtitle LIKE '%' || #{searchText} || '%'
+				</if>
+				<if test='searchKinds == "fbWrittenDate" and searchKinds != null'>
+				OR fbwrittendate LIKE '%' || #{searchText} || '%'
+				</if>
+				<if test='searchKinds == "fbWriter" and searchKinds != null'>
+				OR unick LIKE '%' || #{searchText} || '%'
+				</if>
+			</trim>
+			)
+			WHERE rnum between #{paging.start} and #{paging.end}
+		</select>
+		
+		<delete id="deleteFreeBoard">
+			DELETE tb_freeboard
+			WHERE fbno = #{fbNo}
+		</delete>
+		
+		<select id="selectFileWithFree" resultType="HashMap">
+    		SELECT * FROM
+    			( SELECT
+    				f.fbno, f.fbuno, f.fbtitle, f.fbcontent, f.fbwrittendate, f.fbhitscnt,
+    				ff.ffno, ff.fffbno, ff.fforiginfilename, ff.ffstoredfilename, ff.ffsize, ff.ffsavepath
+    			  FROM tb_freeboard f, tb_freefile ff
+    			  WHERE f.fbno = ff.fffbno
+    			  		AND f.fbisdel = 0
+    			  		AND ff.ffisdel = 0
+    			  	ORDER BY ff.ffno DESC 
+    			) FFF
+    		WHERE fbno = #{fbNo}
+    	</select>
+    	
+    	<select id="selectFreeWithCommentList" resultType = "HashMap">
+            SELECT rownum rnum, UFC.* FROM
+				( SELECT
+                    u.uno, u.userid, u.unick, u.uname,
+                    fc.fcno, fc.fcfbno, fc.fcuno, fc.fccontent, fc.fcwrittendate
+                  FROM tb_user u, tb_freecomment fc
+                  WHERE fc.fcuno = u.uno
+                  AND fc.fcisdel = 0
+                  AND u.uisleave = 0
+                  ORDER BY fc.fcno
+                ) UFC
+            WHERE fcfbno = #{fbNo}
+    	</select>
+    	
+    	<select id="selectFreeDetail" resultType="HashMap">
+    		SELECT * FROM 
+    			( SELECT
+    				u.uno, u.userid, u.uname, u.unick, 
+    				f.fbno, f.fbuno, f.fbtitle, f.fbcontent, f.fbwrittendate, f.fbhitscnt
+    			  FROM tb_user u, tb_freeboard f 
+    			  WHERE f.fbuno = u.uno
+    			  	AND	u.uisleave = 0
+    			  	AND f.fbisdel = 0
+    			) UF
+    		WHERE fbno = #{fbNo}
+    	</select>
+    	
+    	<delete id="deleteFreeComment">
+    		DELETE FROM	tb_freecomment
+    		WHERE fcno = #{fcNo}
+    	</delete>
+    	
+    	<delete id="deleteFreeCommentByFbNo">
+    		DELETE FROM	tb_freecomment
+    		WHERE fcfbno = #{fcFbNo}
+    	</delete>
+    	
+    	<delete id="deleteFreeFileByFbNo">
+    		DELETE FROM tb_freefile
+    		WHERE fffbno = #{ffFbNo}
+    	</delete>
+    	
+		
+    	<resultMap type="com.DongHang_ComeFunny.www.model.vo.FreeBoard" id="FREEBOARDLIST">
+    		<result property="fbNo" column="fbno"/>
+    		<result property="fbTitle" column="fbtitle"/>
+    		<result property="fbWrittenDate" column="fbwrittendate"/>
+    		<result property="fbHitsCnt" column="fbhitscnt"/>
+    		<result property="fbIsDel" column="fbisdel"/>
+    		<result property="fbWriter" column="unick"/>
+    	</resultMap>
+    
+    </mapper>

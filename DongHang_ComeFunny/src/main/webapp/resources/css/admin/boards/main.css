@@ -1,0 +1,27 @@
+@charset "UTF-8";
+
+.boardsMain {
+    width: 1200px;
+    margin: 0 auto;
+   
+}
+
+.boardsBar {
+	width: 35%;
+    margin-top: 25px;
+    margin-left: 50px;
+    position: relative;
+    height: 200px;
+    left: 10%;
+    display: inline-block;
+    text-align: center;
+}
+
+.boardsBar:hover {
+	background-color: floralwhite;
+	}
+	
+.boardsImg{
+	width: 250px;
+    height: 175px;
+}

@@ -1,0 +1,333 @@
+@charset "UTF-8";
+*{
+	padding: 0;
+	margin: 0;
+	
+}
+a,a:link,a:visited,a:hover{
+	font-style : none;
+	text-decoration: none;
+	color:black;
+}
+/* 스위치 버튼 */
+#dongHangBtn{
+	margin: 0% 15%;
+	margin-bottom: 3%;
+}
+#dongHangBtn img{
+	width: 23%;
+}
+#switchBlock1{
+	display: inline-block;
+    width: 10%;
+    height: 2em;
+    position: relative;
+    top: 2.5em;
+    left: 0.3em;
+    cursor: pointer;
+   
+}
+#switchBlock2{
+	display: inline-block;
+    width: 10%;
+    height: 2em;
+    position: relative;
+    top: 2.5em;
+    left: 1.2em; 
+    cursor: pointer;
+}
+
+/* 테이블 */
+#donghangform{
+	width: 70%;
+	margin: 0 auto;
+	min-height: 326px;
+}
+#donghangformTitle{
+	display: inline-block;
+	margin: 2em 0;
+    padding: 0.3em;
+    font-size: 15px;
+    font-weight: bold;
+}
+#deleteBtn{
+	background: #5D7CA6;
+    float: right;
+    margin: 2em 0.3em;
+    height: 2.3em;
+    width: 4.5em;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+}
+#donghangtable{
+    border-bottom: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+}
+#donghangtable tr th,td{
+	align-content: center;
+	text-align: center;
+}
+#donghangtable tr th{
+	background: #ccc;
+	color: #666;
+}
+#donghangtable tr:hover a{
+/* 	text-decoration: underline; */
+	cursor: pointer;
+}
+.adminBtn{
+    font-size: 11px;
+    background: #bbb;
+    border-radius: 2px;
+    /* 	padding: 0.3em; */
+/*     margin: 0px 2.3em 0 0; */
+/*     float: right; */
+/*     font-size: 11px; */
+/*     background: #999; */
+/*     border-radius: 2px; */
+}
+
+.adminBtn:hover{
+	text-decoration: none;
+	cursor: pointer;
+	background: #F2CAA7;
+	
+}
+#joinerNum{
+	line-height: 2em;
+}
+
+/* 동행관리 모달 */
+.overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  transition: opacity 500ms;
+  visibility: hidden;
+  opacity: 0;
+}
+.overlay:target {
+  visibility: visible;
+  opacity: 1;
+}
+
+.popup {
+    margin: 10% auto;
+    padding: 2%;
+    background: #fff;
+    border-radius: 5px;
+    width: 40%;
+    position: relative;
+    transition: all 5s ease-in-out;
+    min-width: 600px; /* 여기 주석 필요? */
+}
+
+.popup .close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  transition: all 200ms;
+  font-size: 30px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #666;
+}
+.popup .close:hover {
+  color: #333;
+}
+.popup .content { /* 여긴 다른부분 */
+/* 	  max-height: 30%; */ 
+/*   overflow: auto; */
+/*   margin-top: 4%; */
+  overflow: scroll;
+  margin-top: 4%;
+  height: 19.4em;
+}
+.popup .content2 {
+/*   max-height: 30%; */
+  overflow: scroll;
+  margin-top: 4%;
+  height: 19.4em;
+}
+
+@media screen and (max-width: 700px){
+  .box{
+    width: 70%;
+  }
+  .popup{
+    width: 70%;
+  }
+}
+
+.overlay div p{
+	font-size: 15px;
+    font-weight: 600;
+    cursor: default;
+}
+
+/* 모달 테이블 */
+#modalTb{
+	margin: 0 auto;
+	cursor: default;
+}
+#modalTb tr th{
+	text-align: center;	
+	font-size: 1em;
+	background: #ccc;
+/* 	height: 3em; */
+}
+#modalTb tr td{
+	text-align: center;	
+	font-size: 0.9em;
+}
+#gotoUserInfo:hover{
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.agreeBtn:hover{
+	color: #fff;
+	background: #023059;
+}
+.refuseBtn:hover{
+	color: #fff;
+	background: #023059;
+}
+.agreeBtn{
+	padding: 0.3em 0.5em;
+    margin: 0px 0.5em;
+    background: #03588C;
+    color: #fff;
+    font-size: 13px;
+    border-radius: 3px;
+    border-style: none;
+}
+.refuseBtn{
+	padding: 0.3em 0.5em;
+    margin: 0px 0.5em;
+    background: #73A2BF;
+    color: #fff;
+    font-size: 13px;
+    border-radius: 3px;
+    border-style: none;
+}
+/* .fixed_top{ */
+/*    display:inline-table; */
+/*    position:absolute; */
+/*    top:10%; */
+/*    width:calc(100% - 17px); */
+/*    background:#ccc; */
+/* } */
+
+/* 확인 모달 */
+.chkOverlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.3);
+  transition: opacity 200ms;
+  visibility: hidden;
+  opacity: 0;
+}
+.chkOverlay:target {
+  visibility: visible;
+  opacity: 1;
+}
+.chkPopup {
+/* 	  margin: 10% auto; */
+  margin: 15% auto;
+  padding: 2%;
+  background: #fff;
+  border-radius: 5px;
+  width: 30%;
+  position: relative;
+  transition: all 2s ease-in-out;
+  text-align: center;
+  min-width: 260px;
+}
+
+.chkPopup .close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  transition: all 200ms;
+  font-size: 30px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #666;
+}
+.chkPopup .close:hover {
+  color: #333;
+}
+.chkPopup .content {
+  max-height: 30%;
+  overflow: auto;
+  margin-top: 4%;
+}
+
+@media screen and (max-width: 700px){
+  .box{
+    width: 70%;
+  }
+  .chkPopup{
+    width: 70%;
+  }
+}
+
+.chkOverlay div p{
+	font-size: 15px;
+    font-weight: 600;
+    cursor: default;
+}
+
+/* 수락버튼 */
+#agreebtn{
+	background: #03588C;
+	color: #fff;
+	margin: 2em;
+}
+/* 취소 버튼 */
+#cancelbtn{
+	background: #73A2BF;
+	color: #fff;
+	margin: 2em;
+}
+
+#myDongHang {
+	min-height: 490px;
+	min-width: 750px;
+}
+
+/* 각게시판댓글로 이동하는 버튼 */
+#goBtn{
+	background: #73A2BF;
+    margin: 0 0.5em;
+    height: 2em;
+    width: 5.8em;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+}
+#doBtn{
+	background: #ffa352 ;
+    height: 2em;
+    width: 5.8em;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+}
+
+
+
+
+
+
+
+
+

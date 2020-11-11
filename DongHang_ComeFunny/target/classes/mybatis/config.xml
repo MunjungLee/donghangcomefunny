@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+  
+<!-- 0. 2번째 줄에 DOCTYPE 추가 -->
+
+<!-- 1. configuration 태그 작성 -->
+<configuration>
+	<!-- 2. settings 태그에 DB컬럼명을 Camel표기법으로 변경 : mapUnderscoreToCamelCase
+		 및 null값 들어간 경우 exception 처리 : jdbcTypeForNull  -->
+	<!-- DB컬럼명을 JAVA의 Camel표기법으로 변경 -->
+	<settings>
+		<setting name="jdbcTypeForNull" value="NULL"/>
+		<setting name="mapUnderscoreToCamelCase" value="true" />
+	</settings>
+	
+	<!-- 3. 클래스명에 별칭 지정하여 mapper.xml에서 resultType에 입력시 별칭으로 호출 할 수 있는 설정 -->
+	<!-- typeAlias 지정시 type에 해당 패키지명.클래스명  alias=별명 지정
+		 주의 : typeAlias 지정시 주석 해제-->
+
+	<typeAliases>
+		<typeAlias type="com.DongHang_ComeFunny.www.model.vo.FreeBoard" alias="FBOARD"/>
+		<typeAlias type="com.DongHang_ComeFunny.www.model.vo.ReviewBoard" alias="RBOARD"/>
+		<typeAlias type="com.DongHang_ComeFunny.www.model.vo.FreeComment" alias="FCOMMENT"/>
+		<typeAlias type="com.DongHang_ComeFunny.www.model.vo.ReviewComment" alias="RCOMMENT"/>
+		<typeAlias type="com.DongHang_ComeFunny.www.model.vo.ReviewDhTicket" alias="RTICKET"/>
+		
+		<typeAlias type="com.DongHang_ComeFunny.www.model.vo.Order" alias="ORDER"/>
+		<typeAlias type="com.DongHang_ComeFunny.www.model.vo.GoBoard" alias="GOBOARD"/>
+		<typeAlias type="com.DongHang_ComeFunny.www.model.vo.GoApply" alias="GOAPPLY"/>
+		
+		<typeAlias type="com.DongHang_ComeFunny.www.model.vo.User" alias="USER"/>
+		
+		<typeAlias type="com.DongHang_ComeFunny.www.model.vo.UserFile" alias="USERFILE"/>
+      	<typeAlias type="com.DongHang_ComeFunny.www.model.vo.GoCheck" alias="GOCHECK"/>
+        <typeAlias type="com.DongHang_ComeFunny.www.model.vo.Message" alias="MESSAGE"/>
+        
+        <typeAlias type="com.DongHang_ComeFunny.www.model.vo.GoBoard" alias="GoBoard"/>
+		<typeAlias type="com.DongHang_ComeFunny.www.model.vo.GoCheck" alias="GoCheck"/>
+		<typeAlias type="com.DongHang_ComeFunny.www.model.vo.DoBoard" alias="DoBoard"/>
+		<typeAlias type="com.DongHang_ComeFunny.www.model.vo.DoCheck" alias="DoCheck"/>
+		<typeAlias type="com.DongHang_ComeFunny.www.model.vo.DoImg" alias="DoImg"/>
+		
+		<typeAlias type="com.DongHang_ComeFunny.www.model.vo.UserImg" alias="USERIMG"/>
+		<typeAlias type="com.DongHang_ComeFunny.www.model.vo.NoticeBoard" alias="NOTICE"/>
+		<typeAlias type="com.DongHang_ComeFunny.www.model.vo.NoticeFile" alias="NOTICEFILE"/>
+		<typeAlias type="com.DongHang_ComeFunny.www.model.vo.FreeFile" alias="FREEFILE"/>
+		<typeAlias type="com.DongHang_ComeFunny.www.model.vo.QuestionFile" alias="QUESTIONFILE"/>
+		<typeAlias type="com.DongHang_ComeFunny.www.model.vo.AnswerFile" alias="ANSWERFILE"/>
+		<typeAlias type="com.DongHang_ComeFunny.www.model.vo.Admin" alias="ADMIN"/>
+	</typeAliases>
+
+
+</configuration>

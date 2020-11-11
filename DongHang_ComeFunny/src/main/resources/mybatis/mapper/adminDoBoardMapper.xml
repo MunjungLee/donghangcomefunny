@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+    <mapper namespace="AdminDoBoard">
+    	<select id="selectDoBoardCnt" resultType="int">
+    		SELECT COUNT(*) FROM  
+    			(SELECT d.* FROM  tb_doboard d, tb_user u
+    				WHERE u.uno = d.dbuno
+    				<if test='searchKinds == "dbWriter" and searchKinds != null'>
+					AND u.unick LIKE '%' || #{searchText} || '%'
+					</if>) sd
+			<trim prefix= "WHERE" prefixOverrides="AND">
+				<if test='searchKinds == "dbTitle" and searchKinds != null'>
+				AND sd.dbtitle LIKE '%' || #{searchText} || '%'
+				</if>
+				<if test='searchKinds == "dbWrittenDate" and searchKinds != null'>
+				AND sd.dbwrittendate LIKE '%' || #{searchText} || '%'
+				</if>
+				<if test='searchKinds == "dbRecruitstatus" and searchKinds != null'>
+				AND sd.dbrecruitstatus LIKE '%' || #{searchText} || '%'
+				</if>
+			</trim>
+    	
+    	</select>
+    	
+    	
+    	
+    	<select id="selectDoBoardList" resultMap="DOBOARDLIST">
+		 	SELECT dbno, dbtitle, dbwrittendate, dbisdel, dbrecruitstatus, unick FROM (
+			SELECT rownum rnum,d1.*FROM(
+			SELECT * FROM tb_doboard d, tb_user u WHERE u.uno = d.dbuno ORDER BY d.dbno DESC) d1 
+			<trim prefix= "WHERE" prefixOverrides="OR">
+				<if test='searchKinds == "dbTitle" and searchKinds != null'>
+				OR dbtitle LIKE '%' || #{searchText} || '%'
+				</if>
+				<if test='searchKinds == "dbWrittenDate" and searchKinds != null'>
+				OR dbwrittendate LIKE '%' || #{searchText} || '%'
+				</if>
+				<if test='searchKinds == "dbRecruitStatus" and searchKinds != null'>
+				OR dbrecruitstatus LIKE '%' || #{searchText} || '%'
+				</if>
+				<if test='searchKinds == "dbWriter" and searchKinds != null'>
+				OR unick LIKE '%' || #{searchText} || '%'
+				</if>
+			</trim>
+			)
+			WHERE rnum between #{paging.start} and #{paging.end}
+		</select>
+		
+		<delete id="deleteDoBoard">
+			DELETE tb_doboard
+			WHERE dbno = #{dbNo}
+		</delete>
+		
+		
+		<select id="selectDoDetail" resultType="hashmap">
+		SELECT *
+		FROM tb_doboard, tb_docheck
+		WHERE dcdbno = dbno
+		AND dbno = #{dbno}
+	</select>
+	
+	<!-- 함께 해요 후기 리스트 -->
+	<select id="selectdoReview" resultType="Map">
+		select * from tb_reviewboard,
+		(SELECT *
+		 FROM tb_user left join tb_userimg
+		 ON uno = uiuno
+		)prfile
+		where rbuno = uno
+		AND rbdbno = #{dbno}
+		ORDER BY rbhoststar desc
+	</select>
+	
+	<!-- 호스트 정보 -->
+	<select id="selectHostInfo" resultType="Map">
+		SELECT DISTINCT(uno), unick, (to_char(sysdate,'YYYY')-substr(ubirth,1,4)+1) as age, ugender, UISTOREDIMGNAME, dbno, 
+		(select round(NVL(avg(rbhoststar), 0),2) as satr from tb_reviewboard, tb_doboard where rbdbno = dbno and dbno= #{dbNo}) star
+		FROM tb_user 
+    	left join tb_userimg ON uno = uiuno
+    	left join tb_doboard ON uno = dbuno
+		where dbno = #{dbNo}
+	</select>
+	
+	<!-- 동행 신청자 리스트 -->
+	<select id="selectApplyList" resultType="Map">
+		SELECT uno,unick,(to_char(sysdate,'YYYY')-substr(ubirth,1,4)+1)age, 
+				ugender,UISTOREDIMGNAME, dastatus 
+		FROM tb_doapply,
+		(SELECT *
+		 FROM tb_user left join tb_userimg
+		 ON uno = uiuno
+		)profile
+		WHERE dauno = uno
+		AND dadbno = #{dbno}
+		ORDER BY dano DESC
+		
+<!-- 		SELECT DISTINCT(uno),unick,(to_char(sysdate,'YYYY')-substr(ubirth,1,4)+1)age,  -->
+<!-- 				ugender,UISTOREDIMGNAME  -->
+<!-- 		FROM tb_doapply, -->
+<!-- 		(SELECT * -->
+<!-- 		 FROM tb_user left join tb_userimg -->
+<!-- 		 ON uno = uiuno -->
+<!-- 		)profile -->
+<!-- 		WHERE dauno = uno -->
+<!-- 		AND dadbno = #{dbno}; -->
+	</select>
+	
+	<!-- 장소 사진 -->
+	<select id="selectplacePhoto" resultType="Map">
+		SELECT dino,distoredimgname 
+		FROM tb_doimg
+		WHERE didbno = #{dbno}	
+	</select>
+		
+		
+		
+    	<resultMap type="com.DongHang_ComeFunny.www.model.vo.DoBoard" id="DOBOARDLIST">
+    		<result property="dbNo" column="dbno"/>
+    		<result property="dbTitle" column="dbtitle"/>
+    		<result property="dbWrittenDate" column="dbWrittendate"/>
+    		<result property="dbIsDel" column="dbisdel"/>
+    		<result property="dbRecruitStatus" column="dbrecruitstatus"/>
+    		<result property="dbWriter" column="unick"/>
+    	</resultMap>
+    
+    </mapper>

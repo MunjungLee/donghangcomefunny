@@ -1,0 +1,324 @@
+@charset "UTF-8";
+
+@media screen and (min-width: 1200px){
+	.reviewview {
+	    width: 1200px;
+	    margin: 0 auto; 
+		margin-top: 70px;
+	} 
+}
+
+.reviewview {
+	margin-top: 70px;
+}
+
+.reviewview__border {
+	margin-top: 10px;
+	padding-top: 20px;
+	padding-bottom: 20px;
+	width: 100%;
+    border-radius: .28571429rem;
+    -webkit-box-shadow: 0px 2px 4px 0px rgba(34, 36, 38, 0.12), 0px 2px 10px 0px rgba(34, 36, 38, 0.15);
+          box-shadow: 0px 2px 4px 0px rgba(34, 36, 38, 0.12), 0px 2px 10px 0px rgba(34, 36, 38, 0.15);
+    
+	
+}
+
+.reviewview__header {
+	margin-bottom: 1em;
+}
+
+.reviewview__header__label {
+	border-color: #00827c!important;
+	background-color: #00b5ad!important;
+    color: #fff!important;
+    left: calc(-1rem - 1.2em);
+    margin-right: -1.2em;
+    padding-left: calc(1rem + 1.2em);
+    padding-right: 1.2em;
+    
+    position: relative;
+    margin: 0;
+    min-width: max-content;
+    border-radius: 0 .28571429rem .28571429rem 0;
+    
+    font-size: .85714286rem;
+        
+    display: inline-block;
+    line-height: 1;
+    vertical-align: baseline;
+    background-image: none;
+    padding: .7833em .833em;
+    text-transform: none;
+    font-weight: 700;
+    border: 0 solid transparent;
+    transition: background .1s ease;
+  
+}
+.reviewview__header__label span {
+   	font-size: 1.2rem;
+}
+
+.reviewview__header__label:after {
+  position: absolute;
+  content: '';
+  top: 100%;
+  left: 0%;
+  background-color: transparent !important;
+  border-style: solid;
+  border-width: 0em 1.2em 1.2em 0em;
+  border-color: transparent;
+  border-right-color: inherit;
+  width: 0em;
+  height: 0em;
+}
+
+/* .reviewlist__header__title { */
+/* 	font-size: 1.2rem; */
+/*     color: rgba(0,0,0,.87); */
+/*     position: relative; */
+/*     bottom: 5px; */
+/*     font-weight: bold; */
+/* } */
+.reviewview__header__title {
+/*     display: flex; */
+/*     justify-content: center; */
+/*     align-items: center; */
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+	
+
+.reviewview__table, .reviewview__comment__list {
+	width: 87%;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+    display: block;
+}
+
+.reviewview__table table, .reviewview__comment__list table
+{
+	width: 100%;
+    border-collapse:separate;
+    
+	background: #FFFFFF;
+ 	border: 1px solid rgba(34, 36, 38, 0.15);
+  	-webkit-box-shadow: none;
+          	box-shadow: none;
+  	border-radius: 0.28571429rem;
+  	text-align: left;
+  	color: rgba(0, 0, 0, 0.87);
+  	
+    border-top: 0.2em solid #00B5AD;
+    padding-bottom: 10px;
+}
+
+.reviewview__comment__list table {
+	border-top: .2em solid #6435c9;
+}
+
+
+.reviewview__table td, .reviewview__comment__list td {
+	width: 80px;
+	text-align: center;
+}
+
+
+.reviewview__table tr>td, .reviewview__comment__list tr>td {
+	padding: 0.92857143em 0.78571429em;
+	-webkit-transition: background 0.1s ease, color 0.1s ease;
+  	transition: background 0.1s ease, color 0.1s ease;
+  	border-top: 1px solid rgba(34, 36, 38, 0.1);
+}
+
+.reviewview__table td:first-child, .reviewview__comment__list td:first-child {
+	width: 10%;
+}
+
+.reviewview__comment__title {
+	display: flex;
+}
+
+.reviewview__table__header, .reviewview__comment__header, .reviewview__table__target, .reviewview__table__title  {
+	display: flex;
+	justify-content: space-between;
+}
+
+.reviewview__table__content, .reviewview__comment__content {
+	min-height: 400px;
+	text-align: start;
+}
+
+.reviewview__table__download, .reviewview__comment__download {
+	display: flex;
+	
+}
+
+.reviewview__table a:link, .reviewview__comment__list a:link {
+	color: rgba(0, 0, 0, 0.87);
+}
+
+.reviewview__table a:visited, .reviewview__comment__list a:visited{
+	color: rgba(0, 0, 0, 0.87);
+}
+
+
+
+.reviewview__comment__write {
+	margin-top: 15px;
+	text-align: start;
+	margin-bottom: 15px;
+}
+
+.reviewview__comment__write span {
+	font-weight: bold;
+	font-size: 1.7rem;
+}
+
+.reviewview__comment__list {
+	margin-top: 20px;
+}
+
+.reviewview__comment__title {
+	font-weight: bold;
+	font-size: 1.7rem;
+}
+
+.reviewview__comment__content {
+	min-height: 80px;
+}
+
+.reviewview__comment__list tr:nth-child(2n+3)>td {
+	padding: 13px 31px;
+	border-top: 0px;
+    text-align: start;
+}
+
+.reviewview__button {
+	margin-top: 15px;
+	display:flex;
+	margin-bottom: 15px;
+	justify-content: space-between;
+}
+
+.reviewview__button__modify, .reviewview__button__list, .reviewview__button__delete, .reviewview__button__recommend, .reviewview__button__like {
+	cursor: pointer;
+    display: inline-block;
+    min-height: 1em;
+    outline: 0;
+    border: none;
+    vertical-align: baseline;
+    background: #e0e1e2 none;
+    margin: 0 .25em 0 0;
+    padding: .78571429em 1.5em .78571429em;
+    text-transform: none;
+    font-weight: 700;
+    line-height: 1em;
+    font-style: normal;
+    text-align: center;
+    text-decoration: none;
+    border-radius: .28571429rem;
+    user-select: none;
+	-webkit-tap-highlight-color: transparent;
+	
+	background-color: #2185D0;
+	color: #FFFFFF;
+	text-shadow: none;
+	background-image: none;
+	-webkit-box-shadow: 0px 0em 0px 0px rgba(34, 36, 38, 0.15) inset;
+	       box-shadow: 0px 0em 0px 0px rgba(34, 36, 38, 0.15) inset;
+}
+
+.reviewview__button__modify:hover {
+	background-color: #1678c2;
+	color: #FFFFFF;
+	text-shadow: none;
+}
+
+.reviewview__button__modify:active {
+	background-color: #1a69a4;
+	color: #FFFFFF;
+	text-shadow: none;
+}
+
+.reviewview__button__list {
+	background-color: #A5673F;
+	color: #FFFFFF;
+	text-shadow: none;
+	background-image: none;
+}
+
+.reviewview__button__list:hover {
+	background-color: #975b33;
+	color: #FFFFFF;
+	text-shadow: none;
+}
+
+.reviewview__button__list:active {
+	background-color: #805031;
+	color: #FFFFFF;
+	text-shadow: none;
+}
+
+
+.reviewview__button__delete {
+	background-color: #DB2828;
+	color: #FFFFFF;
+	text-shadow: none;
+	background-image: none;
+}
+
+.reviewview__button__delete:hover {
+	background-color: #d01919;
+	color: #FFFFFF;
+	text-shadow: none;
+}
+
+.reviewview__button__delete:active {
+	background-color: #b21e1e;
+	color: #FFFFFF;
+	text-shadow: none;
+}
+
+.reviewview__button__recommend {
+	background-color: #6435C9;
+	color: #FFFFFF;
+	text-shadow: none;
+	background-image: none;
+}
+
+.reviewview__button__recommend:hover {
+	background-color: #5829bb;
+	color: #FFFFFF;
+	text-shadow: none;
+}
+
+.reviewview__button__recommend:active {
+	background-color: #502aa1;
+	color: #FFFFFF;
+	text-shadow: none;
+}
+
+.reviewview__button__like {
+	background-color: #A333C8;
+	color: #FFFFFF;
+	text-shadow: none;
+	background-image: none;
+}
+
+.reviewview__button__like:hover {
+	background-color: #9627ba;
+	color: #FFFFFF;
+	text-shadow: none;
+}
+
+.reviewview__button__like:active {
+	background-color: #82299f;
+	color: #FFFFFF;
+	text-shadow: none;
+}
+
+
+
+

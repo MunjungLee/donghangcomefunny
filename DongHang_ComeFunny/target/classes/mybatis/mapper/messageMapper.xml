@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="MESSAGE">
+
+
+   <select id="selectReceiveMsgCnt" resultType="int">
+          SELECT count(*) from tb_message where msowner = #{uno} and mstype = 0
+      </select>
+         <select id="selectSendMsgCnt" resultType="int">
+          SELECT count(*) from tb_message where msowner = #{uno} and mstype = 1
+      </select>
+         <select id="selectStoredMsgCnt" resultType="int">
+          SELECT count(*) from tb_message where msowner = #{uno} and mstype = 2
+      </select>
+         <select id="selectMyMsgCnt" resultType="int">
+          SELECT count(*) from tb_message where  msowner= #{uno} and mstype = 3
+      </select>
+          <select id="selectMessageList" resultType="HashMap">
+          SELECT * FROM
+             ( SELECT rownum rnum,
+              M.*,  us.userid as "senderid" FROM (
+                SELECT
+                   u.userid, m.msno, m.msuno, m.msreceiver, m.mstitle, m.mscontent, m.mswrittentime, m.mstype                        
+                FROM tb_message m, tb_user u
+                WHERE m.msowner = #{uno}
+                   AND m.mstype= 0
+                   AND u.uno = #{uno}
+                   ORDER BY m.msno DESC
+                ) M, tb_user us where M.msuno = us.uno
+             ) MR
+          WHERE rnum BETWEEN #{paging.start} and #{paging.end} 
+       </select>
+              <select id="selectSendMsgList" resultType="HashMap">
+             SELECT * FROM
+             ( SELECT rownum rnum,
+              M.*,  us.userid as "receiverid" FROM (
+                SELECT
+                   u.userid, m.msno, m.msuno, m.msreceiver, m.mstitle, m.mscontent, m.mswrittentime, m.mstype                        
+                FROM tb_message m, tb_user u
+                WHERE m.msowner = #{uno}
+                   AND m.mstype= 1
+                   AND u.uno = #{uno}
+                   ORDER BY m.msno DESC
+                ) M, tb_user us where M.msreceiver = us.uno
+             ) MR
+          WHERE rnum BETWEEN #{paging.start} and #{paging.end} 
+       </select>
+              <select id="selectMyMsgList" resultType="HashMap">
+          SELECT * FROM
+             ( SELECT rownum rnum,
+              M.*,  us.userid as "senderid" FROM (
+                SELECT
+                   u.userid, m.msno, m.msuno, m.msreceiver, m.mstitle, m.mscontent, m.mswrittentime, m.mstype                        
+                FROM tb_message m, tb_user u
+                WHERE m.msowner = #{uno}
+                   AND m.mstype= 3
+                   AND u.uno = #{uno}
+                   ORDER BY m.msno DESC
+                ) M, tb_user us where M.msuno = us.uno
+             ) MR
+          WHERE rnum BETWEEN #{paging.start} and #{paging.end} 
+       </select>
+              <select id="selectStoreMsgList" resultType="HashMap">
+       SELECT * FROM
+             ( SELECT rownum rnum,
+              M.*,  us.userid as "senderid" FROM (
+                SELECT
+                   u.userid, m.msno, m.msuno, m.msreceiver, m.mstitle, m.mscontent, m.mswrittentime, m.mstype                        
+                FROM tb_message m, tb_user u
+                WHERE m.msowner = #{uno}
+                   AND m.mstype= 2
+                   AND u.uno = #{uno}
+                   ORDER BY m.msno DESC
+                ) M, tb_user us where M.msuno = us.uno
+             ) MR
+          WHERE rnum BETWEEN #{paging.start} and #{paging.end} 
+       </select>
+       <delete id="deleteMessage" parameterType="int">
+          DELETE FROM tb_message WHERE msno = #{msno}
+       </delete>
+       <update id="updateMessage" parameterType="int">
+          UPDATE tb_message SET mstype=2 where msno = #{msno}
+       </update>
+        <select id="selectMessage" resultType="MESSAGE">
+           SELECT * FROM tb_message WHERE msno= #{msno}
+        </select>
+        <select id ="selectSequence" resultType="int">
+           SELECT LAST_NUMBER FROM USER_SEQUENCES WHERE SEQUENCE_NAME = 'TB_MESSAGE_SEQ'
+        </select>
+
+        <insert id="insertMessage">
+           insert into tb_message (msuno,msowner,msreceiver,mstitle, mscontent,mswrittentime,mstype)
+           values(#{msUNo},#{msOwner},#{msReceiver},#{msTitle},#{msContent},#{msWrittenTime},#{msType})
+        </insert>
+        
+        
+        
+</mapper>

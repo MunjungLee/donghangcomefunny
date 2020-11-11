@@ -1,0 +1,25 @@
+@charset "UTF-8";
+
+.qeustionBoardList{
+			width: 1200px;
+		    margin: 0 auto;
+}
+
+.qeustionBoardListToolbar{
+			display: inline-block;
+}
+
+#qeustionBoardListSearch{
+			display: inline;
+		    position: relative;
+		    margin-left: 0px;
+		    left: 200px;
+		    right: 100px;
+}
+
+#deleteSelectQeustionBoard{
+			width: 100px;
+		    position: relative;
+		    display: inline;
+		    left: 500px;
+}

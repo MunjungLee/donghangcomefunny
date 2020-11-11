@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+	<mapper namespace="AdminUser">
+	
+		<select id="selectUserCnt" resultType="int">
+			SELECT COUNT(*) FROM tb_user
+			<trim prefix= "WHERE" prefixOverrides="AND">
+				<if test='searchKinds == "userId" and searchKinds != null'>
+				AND userid LIKE '%' || #{searchText} || '%'
+				</if>
+				<if test='searchKinds == "userName" and searchKinds != null'>
+				AND uname LIKE '%' || #{searchText} || '%'
+				</if>
+				<if test='searchKinds == "userNick" and searchKinds != null'>
+				AND unick LIKE '%' || #{searchText} || '%'
+				</if>
+			</trim>
+		</select>
+		
+<!-- 		<select id="selectUserList" resultType="USER"> -->
+<!-- 			SELECT uno, userid, uname, unick, uregdate, uisleave FROM ( -->
+<!-- 			SELECT rownum rnum,u1. *FROM( -->
+<!-- 			SELECT * FROM tb_user ORDER BY uno DESC) u1 ) -->
+<!-- 			WHERE rnum between #{start} and #{end} -->
+<!-- 		</select> -->
+		
+		<select id="selectUserList" resultType="USER">
+			SELECT uno, userid, uname, unick, uregdate, uisleave FROM (
+			SELECT rownum rnum,u1. *FROM(
+			SELECT * FROM tb_user ORDER BY uno DESC) u1 
+			<trim prefix= "WHERE" prefixOverrides="OR">
+				<if test='searchKinds == "userId" and searchKinds != null'>
+				OR userid LIKE '%' || #{searchText} || '%'
+				</if>
+				<if test='searchKinds == "userName" and searchKinds != null'>
+				OR uname LIKE '%' || #{searchText} || '%'
+				</if>
+				<if test='searchKinds == "userNick" and searchKinds != null'>
+				OR unick LIKE '%' || #{searchText} || '%'
+				</if>
+			</trim>
+			)
+			WHERE rnum between #{paging.start} and #{paging.end}
+		</select>
+		
+		<delete id="deleteUser">
+			DELETE tb_user
+			WHERE uno = #{uNo}
+		</delete>
+		
+		<delete id="deleteUserFile">
+			DELETE tb_userfile
+			WHERE ufuno = #{uNo}
+		</delete>
+		
+		<!-- 버튼 누르면 삭제 -->
+		<!-- 매달 말 스케줄링 -->
+<!-- 		<delete id="deleteUser"> -->
+<!-- 			DELETE tb_user -->
+<!-- 			WHERE uisleve = 1 -->
+<!-- 		</delete> -->
+		
+	
+		<select id="selectUserByUNo" resultType="USER">
+			SELECT * FROM tb_user
+			WHERE uno = #{uNo}
+		</select>
+		
+		<select id="selectUserFileByUNo" resultType="USERFILE">
+			SELECT * FROM tb_userfile
+			WHERE ufuno = #{uNo}
+		</select>
+
+		
+		<update id="updateUser" parameterType="USER">
+			UPDATE tb_user
+			<set>
+				userid = #{userId},
+				upw = #{uPw},
+				uname = #{uName},
+				ubirth = #{uBirth},
+				ugender = #{uGender},
+				unick = #{uNick},
+				umail = #{uMail},
+				uaddress = #{uAddress},
+				udhtcnt = #{uDhtCnt},
+				uisleave = #{uIsLeave}
+			</set>
+			WHERE uno = #{uNo}
+		</update>
+		<update id="updateUserFile">
+			UPDATE tb_userfile
+			<set>
+			uforiginfilename= #{originFileName},
+			ufstoredfilename= #{storedFileName},
+			ufsize = #{fileSize},
+			ufsavepath = #{savePath}
+			</set>		
+			WHERE ufuno = #{ufUNo} 		
+		</update>
+		
+		<select id="selectUserFileCount" resultType="int">
+			SELECT COUNT(*) FROM tb_userfile
+			WHERE ufuno = #{uNo}
+		</select>
+		
+		<insert id="insertUserFile">
+			INSERT INTO tb_userfile
+			(ufuno, uforiginfilename, ufstoredfilename, ufsize, ufsavepath)
+			VALUES
+			(#{ufUNo}, #{originFileName}, #{storedFileName}, #{fileSize}, #{savePath})
+		</insert>
+	</mapper>
+	

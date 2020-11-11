@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="DO">
+	
+	<!-- insert -->
+	<insert id="insertdoboard">
+		insert into tb_doboard (DBUNO, DBTITLE, DBCONTENT, 
+		DBRECRUITDATE, DBRECRUITAREA, DBRECRUITSTATUS, DBRECRUITNUMBER, DBRECRUITGENDER, DBRECRUITCOST)
+		values (#{dbUNo}, #{dbTitle}, #{dbContent}, #{dbRecruitDate}, #{dbRecruitArea}, 
+			#{dbRecruitStatus}, #{dbRecruitNumber}, #{dbRecruitGender}, #{dbRecruitCost} )
+	</insert>
+		
+	<insert id="insertdoage">
+		<foreach collection="list" item="age" separator=" " open="INSERT ALL" close="SELECT * FROM DUAL">
+          	INTO tb_docheck (DCDBNO, DCCATE, DCVALUE)         
+            VALUES (tb_doboard_SEQ.CURRVAL, 'age', #{age})
+       	</foreach>
+	</insert>
+		
+	<insert id="insertdotheme">
+	    <foreach collection="list" item="theme" separator=" " open="INSERT ALL" close="SELECT * FROM DUAL">
+          	INTO tb_docheck (DCDBNO, DCCATE, DCVALUE)       
+            VALUES (tb_doboard_SEQ.CURRVAL, 'theme', #{theme})
+       </foreach>
+	</insert>
+		
+	<insert id="insertfile">
+		insert into tb_doimg (DIDBNO, DIORIGINIMGNAME, DISTOREDIMGNAME, DISAVEPATH)
+		values (tb_doboard_SEQ.CURRVAL, #{diOriginImgName}, #{diStoredImgName}, #{diSavePath})
+	</insert>
+	
+	<!-- 리스트 출력 최신순 -->
+	<select id="selectdolist" resultType="hashmap">
+		select dbno, dbuno, dbtitle, dbcontent, dbwrittendate, dblikecnt, 
+		dbrecruitdate, dbrecruitarea, dbrecruitstatus, dbrecruitnumber, dbrecruitgender, dbrecruitcost,
+		max(di.distoredimgname) as distoredimgnamestoredimg, agecheck, themecheck
+		from tb_doboard d
+		    left outer join tb_doimg di on d.dbno = di.didbno
+		    left outer join (select dcdbno, LISTAGG(dcvalue, ',') WITHIN GROUP (order by dcvalue) as agecheck
+								from tb_docheck where dccate='age' group by dcdbno) agecheck on d.dbno = agecheck.dcdbno
+			left outer join (select dcdbno, LISTAGG(dcvalue, ',') WITHIN GROUP (order by dcvalue) as themecheck
+		                    	from tb_docheck where dccate='theme' group by dcdbno) themecheck on d.dbno = themecheck.dcdbno
+		where dbisdel = 0
+		group by dbno, dbuno, dbtitle, dbcontent, dbwrittendate, 
+		dblikecnt, dbrecruitdate, dbrecruitarea, dbrecruitstatus, dbrecruitnumber, 
+		dbrecruitgender, dbrecruitcost, agecheck, themecheck
+		order by dbwrittendate desc
+	</select>
+	
+	<!-- 리스트 ajax 검색 -->
+	<select id="selectdosearch" resultType="hashmap">
+		select dbno, dbuno, dbtitle, dbcontent, dbwrittendate, dblikecnt, 
+		dbrecruitdate, dbrecruitarea, dbrecruitstatus, dbrecruitnumber, dbrecruitgender, dbrecruitcost,
+		max(di.distoredimgname) as distoredimgnamestoredimg, agecheck, themecheck
+		from tb_doboard d
+		    left outer join tb_doimg di on d.dbno = di.didbno
+		    left outer join (select dcdbno, LISTAGG(dcvalue, ',') WITHIN GROUP (order by dcvalue) as agecheck
+								from tb_docheck where dccate='age' group by dcdbno) agecheck on d.dbno = agecheck.dcdbno
+			left outer join (select dcdbno, LISTAGG(dcvalue, ',') WITHIN GROUP (order by dcvalue) as themecheck
+		                    	from tb_docheck where dccate='theme' group by dcdbno) themecheck on d.dbno = themecheck.dcdbno
+		where d.dbisdel = 0
+		and d.dbtitle || d.dbcontent LIKE '%' || #{searchText}  || '%'
+		group by dbno, dbuno, dbtitle, dbcontent, dbwrittendate, 
+		dblikecnt, dbrecruitdate, dbrecruitarea, dbrecruitstatus, dbrecruitnumber, 
+		dbrecruitgender, dbrecruitcost, agecheck, themecheck
+		order by dbwrittendate desc
+	</select>
+	
+	<!-- ajax filter -->
+	<select id="selectfilterlist" resultType="hashmap">
+		select dbno, dbuno, dbtitle, dbcontent, dbwrittendate, dblikecnt, 
+		dbrecruitdate, dbrecruitarea, dbrecruitstatus, dbrecruitnumber, dbrecruitgender, dbrecruitcost,
+		max(di.distoredimgname) as distoredimgnamestoredimg, agecheck, themecheck
+		from tb_doboard d
+		    left outer join tb_doimg di on d.dbno = di.didbno
+		    left outer join (select dcdbno, LISTAGG(dcvalue, ',') WITHIN GROUP (order by dcvalue) as agecheck
+								from tb_docheck where dccate='age' group by dcdbno) agecheck on d.dbno = agecheck.dcdbno
+			left outer join (select dcdbno, LISTAGG(dcvalue, ',') WITHIN GROUP (order by dcvalue) as themecheck
+		                    	from tb_docheck where dccate='theme' group by dcdbno) themecheck on d.dbno = themecheck.dcdbno
+		where d.dbisdel = 0 
+		and d.dbtitle || d.dbcontent LIKE '%' || #{searchText}  || '%'
+				<if test="!area.isEmpty()"> <!-- 지역 -->
+				and (
+					dbrecruitarea IN 
+      				<foreach item="item" index="index" collection="area" open="(" separator="," close=")">
+      					  #{item}
+        			</foreach>
+					)
+				</if>	
+				<if test="!state.isEmpty()"> <!-- 상태 -->
+				and (
+					dbrecruitstatus IN 
+      				<foreach item="item" index="index" collection="state" open="(" separator="," close=")">
+      					  #{item}
+        			</foreach>
+					)
+				</if>
+				<if test="!gender.isEmpty()"> <!-- 성별 -->
+				and (
+					dbrecruitgender IN 
+      				<foreach item="item" index="index" collection="gender" open="(" separator="," close=")">
+      					  #{item}
+        			</foreach>
+					)
+				</if>
+				<if test="!age.isEmpty()"> <!-- 연령대 -->
+				and (
+      				<foreach item="item" index="index" collection="age" separator=" or " >
+      					agecheck like '%' || #{item} || '%' 
+        			</foreach>
+					)
+				</if>	
+				<if test="!theme.isEmpty()"> <!-- 여행타입 -->
+				and (
+      				<foreach item="item" index="index" collection="theme" separator=" or " >
+      					themecheck like '%' || #{item} || '%' 
+        			</foreach>
+					)
+				</if>			
+		group by dbno, dbuno, dbtitle, dbcontent, dbwrittendate, 
+		dblikecnt, dbrecruitdate, dbrecruitarea, dbrecruitstatus, dbrecruitnumber, 
+		dbrecruitgender, dbrecruitcost, agecheck, themecheck
+		order by dbwrittendate desc
+	</select>
+	
+	
+	<!-- doboard조회 -->
+	<select id="selectdoboard" resultType="DoBoard">
+		select * from tb_doboard
+		where dbno = #{dbNo}
+	</select>
+	
+	<!-- docheck조회 -->
+	<select id="selectdocheck" resultType="Map">
+		select dcdbno, LISTAGG(dcvalue, ',') WITHIN group(order by dcvalue) as dcvalue2
+		from tb_docheck
+		where dcdbno = #{dbNo}
+		group by dcdbno
+	</select>
+	
+	<!-- doimg조회 -->
+	<select id="selectdoimg" resultType="Map">
+		select * from tb_doimg
+		where didbno = #{dbNo}
+	</select>
+	
+	<!-- doboard 업데이트 -->
+	<update id="updatedoboard">
+		update tb_doboard
+		set
+			dbtitle = #{dbTitle},
+			dbcontent = #{dbContent},
+			dbrecruitstatus = #{dbRecruitStatus}
+		where dbno = #{dbNo}
+	</update>
+	
+	<!-- 업데이트시 이미지 인서트 -->
+	<insert id="insertdoimg">
+		insert into tb_doimg (DIDBNO, DIORIGINIMGNAME, DISTOREDIMGNAME, DISAVEPATH)
+		values (#{dbNo}, #{diOriginImgName}, #{diStoredImgName}, #{diSavePath})
+	</insert>
+	
+	<!-- 각 doimg 정보 조회  -->
+	<select id="selectdinoimg" resultType="DoImg">
+		select * from tb_doimg
+		where dino = #{diNo}
+	</select>
+	
+	<!-- doimg 삭제 -->
+	<delete id="deletedoimg">
+		delete from tb_doimg
+		where dino=#{diNo}
+	</delete>
+	
+	<!--*************************상세 보기 ********************-->
+	<select id="selectDoDetail" resultType="hashmap">
+		SELECT *
+		FROM tb_doboard, tb_docheck
+		WHERE dcdbno = dbno
+		AND dbno = #{dbno}
+	</select>
+	
+	<!-- 함께 해요 후기 리스트 -->
+	<select id="selectdoReview" resultType="Map">
+		select * from tb_reviewboard,
+		(SELECT *
+		 FROM tb_user left join tb_userimg
+		 ON uno = uiuno
+		)prfile
+		where rbuno = uno
+		AND rbdbno = #{dbno}
+		ORDER BY rbhoststar desc
+	</select>
+	
+	<!-- 호스트 정보 -->
+	<select id="selectHostInfo" resultType="Map">
+		SELECT DISTINCT(uno), unick, (to_char(sysdate,'YYYY')-substr(ubirth,1,4)+1) as age, ugender, UISTOREDIMGNAME, dbno, 
+		(select round(NVL(avg(rbhoststar), 0),2) as satr from tb_reviewboard, tb_doboard where rbdbno = dbno and dbno= #{dbNo}) star
+		FROM tb_user 
+    	left join tb_userimg ON uno = uiuno
+    	left join tb_doboard ON uno = dbuno
+		where dbno = #{dbNo}
+	</select>
+	
+	<!-- 동행 신청자 리스트 -->
+	<select id="selectApplyList" resultType="Map">
+		SELECT uno,unick,(to_char(sysdate,'YYYY')-substr(ubirth,1,4)+1)age, 
+				ugender,UISTOREDIMGNAME, dastatus 
+		FROM tb_doapply,
+		(SELECT *
+		 FROM tb_user left join tb_userimg
+		 ON uno = uiuno
+		)profile
+		WHERE dauno = uno
+		AND dadbno = #{dbno}
+		ORDER BY dano DESC
+		
+<!-- 		SELECT DISTINCT(uno),unick,(to_char(sysdate,'YYYY')-substr(ubirth,1,4)+1)age,  -->
+<!-- 				ugender,UISTOREDIMGNAME  -->
+<!-- 		FROM tb_doapply, -->
+<!-- 		(SELECT * -->
+<!-- 		 FROM tb_user left join tb_userimg -->
+<!-- 		 ON uno = uiuno -->
+<!-- 		)profile -->
+<!-- 		WHERE dauno = uno -->
+<!-- 		AND dadbno = #{dbno}; -->
+	</select>
+	
+	<!-- 장소 사진 -->
+	<select id="selectplacePhoto" resultType="Map">
+		SELECT dino,distoredimgname 
+		FROM tb_doimg
+		WHERE didbno = #{dbno}	
+	</select>
+
+	<!-- 수락 -->
+	<update id="updateApplyStatus">
+		UPDATE tb_doapply
+		SET dastatus = 1
+		WHERE dadbno = #{dbno}
+		AND dauno = #{uno}	
+	</update>
+	
+	<!-- 거절 -->
+	<update id="updateApplyRefuseStatus">
+		UPDATE tb_doapply
+		SET dastatus = 2
+		WHERE dadbno = #{dbno}
+		AND dauno = #{uno}	
+	</update>
+	
+	<!-- 신청하기  -->
+	<insert id="insertapplyDh">
+		INSERT INTO tb_doapply(dadbno,dauno,dastatus)
+		VALUES(#{dbno},#{uno},0)
+	</insert>
+	
+	<!-- 신청 상태 확인 -->
+	<select id="selectCountApplychk" resultType="int">
+		SELECT count(*)
+		FROM tb_doapply
+		where dadbno = #{dbno}
+		AND dauno = #{uno}
+	</select>
+	
+	<!-- 찜상태 확인 -->
+	<select id="countLikeStatus" resultType="int">
+		select count(*)
+		FROM tb_dolike
+		WHERE dldbno = #{dbno}
+		AND dluno = #{uno}
+	</select>
+	
+	<insert id="insertDoLike">
+		INSERT INTO tb_dolike(dldbno,dluno)
+		VALUES(#{dbno},#{uno})
+	</insert>
+	
+	<delete id="deleteDoLike">
+		DELETE FROM tb_dolike
+		WHERE dldbno = #{dbno}
+		AND dluno = #{uno}
+	</delete>
+	
+	<update id="deleteDoDetail">
+		UPDATE tb_doboard
+		SET dbisdel = 1
+		WHERE dbno = #{dbno}
+	</update>
+	
+	<update id="updatelikecnt">
+		update tb_doboard
+		set dblikecnt = dblikecnt + 1
+		where dbno = #{dbno}
+	</update>
+	
+	<update id="deletelikecnt">
+		update tb_doboard
+		set dblikecnt = dblikecnt - 1
+		where dbno = #{dbno}
+	</update>
+	
+</mapper>

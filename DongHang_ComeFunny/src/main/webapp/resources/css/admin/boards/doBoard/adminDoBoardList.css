@@ -1,0 +1,25 @@
+@charset "UTF-8";
+
+.doBoardList{
+			width: 1200px;
+		    margin: 0 auto;
+}
+
+.doBoardListToolbar{
+			display: inline-block;
+}
+
+#doBoardListSearch{
+			display: inline;
+		    position: relative;
+		    margin-left: 0px;
+		    left: 200px;
+		    right: 100px;
+}
+
+#deleteSelectDoBoard{
+			width: 100px;
+		    position: relative;
+		    display: inline;
+		    left: 500px;
+}

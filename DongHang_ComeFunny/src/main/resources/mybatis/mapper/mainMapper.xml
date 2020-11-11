@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 마이바티스3 Mapper DTD -->
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="MAIN">
+   
+   <!-- 함께해요 베스트  -->
+   <select id="bestgoboard" resultType="hashmap">
+      Select
+         u.uno, u.userid, u.unick, uf.uforiginfilename, uf.ufstoredfilename,
+         g.gbno, g.gbtitle, g.gbwrittendate, g.gbrecruitdate, g.gbrecruitarea, g.gbrecruitstatus, g.gbrecruitgender, g.gblikecnt,
+         agecheck.*, themecheck.*
+      From tb_goboard g
+         left outer join tb_user u on g.gbuno = u.uno
+         left outer join tb_userfile uf on u.uno = uf.ufuno
+         left outer join (select gcgbno, LISTAGG(gcvalue, ',') WITHIN GROUP (order by gcvalue) as agecheck
+                  from tb_gocheck where gccate='age' group by gcgbno) agecheck on g.gbno = agecheck.gcgbno
+         left outer join (select gcgbno, LISTAGG(gcvalue, ',') WITHIN GROUP  (order by gcvalue) as themecheck
+               from tb_gocheck where gccate='theme' group by gcgbno) themecheck on g.gbno = themecheck.gcgbno
+      where u.uisleave = 0 and g.gbisdel = 0
+      order by gblikecnt desc
+   </select>
+   
+   <!-- 함께가요 베스트  -->
+   <select id="bestdoboard" resultType="hashmap">
+      select * from ( 
+         select rownum r, n1.* from (
+            select dbno, dbuno, dbtitle, dbcontent, dbwrittendate, dblikecnt, uisleave,
+                  dbrecruitdate, dbrecruitarea, dbrecruitstatus, dbrecruitnumber, dbrecruitgender, dbrecruitcost,
+                  max(di.distoredimgname) as distoredimgnamestoredimg, agecheck, themecheck
+            from tb_doboard d
+                    left outer join tb_user u on d.dbno = u.uno
+                  left outer join tb_doimg di on d.dbno = di.didbno
+                  left outer join (select dcdbno, LISTAGG(dcvalue, ',') WITHIN GROUP (order by dcvalue) as agecheck
+                                    from tb_docheck where dccate='age' group by dcdbno) agecheck on d.dbno = agecheck.dcdbno
+                  left outer join (select dcdbno, LISTAGG(dcvalue, ',') WITHIN GROUP (order by dcvalue) as themecheck
+                                         from tb_docheck where dccate='theme' group by dcdbno) themecheck on d.dbno = themecheck.dcdbno
+            where dbisdel = 0 and (uisleave is null or uisleave = 0)
+            group by dbno, dbuno, dbtitle, dbcontent, dbwrittendate, 
+            dblikecnt, dbrecruitdate, dbrecruitarea, dbrecruitstatus, dbrecruitnumber, 
+            dbrecruitgender, dbrecruitcost, agecheck, themecheck, uisleave 
+            order by dblikecnt desc 
+            ) n1 
+      ) where r between 1 and 3 
+   </select>
+   
+   <!-- 베스트 호스트 -->
+   <select id="besthost" resultType="hashmap">
+      select * from ( 
+         select rownum r, n1.* from (
+         SELECT uno, userid, uname, unick, ugender, (to_char(sysdate,'YYYY')-substr(ubirth,1,4)+1) as age, gbdhstaravg, gbhoststaravg, ufstoredfilename
+             FROM tb_user u 
+             INNER JOIN 
+                 ( 
+                   SELECT * FROM ( SELECT * FROM tb_goboard gb ORDER BY gbwrittendate DESC )
+                   UNION ALL
+                   SELECT * FROM ( SELECT * FROM tb_doboard db ORDER BY dbwrittendate DESC )
+                 ) gdr
+             on u.uno = gdr.gbuno
+             left outer join tb_userfile on uno = ufuno 
+             WHERE gbhoststaravg in 
+             (select max(gbhoststaravg) from 
+               (SELECT rownum rnum, gd.* FROM
+                 ( SELECT * FROM
+                         ( SELECT * FROM tb_goboard gb ORDER BY gbwrittendate DESC )
+                   UNION ALL
+                   SELECT * FROM
+                         ( SELECT * FROM tb_doboard db ORDER BY dbwrittendate DESC )
+                 ) gd )
+             group by gbuno )
+             order by gbhoststaravg desc
+             ) n1 
+         ) where r between 1 and 3 
+   </select>
+   
+   <!-- 베스트 함께가요 후기 -->
+   <select id="bestgoreview" resultType="hashmap">
+      select *
+      from tb_reviewboard, tb_goboard, tb_user
+      where rbgbno = gbno and gbuno = uno
+      order by gbdhstaravg desc
+   </select>
+   
+   <!-- 베스트 함께해요 후기 --> 
+   <select id="bestdoreview" resultType="hashmap">
+      select *
+      from tb_reviewboard, tb_doboard, tb_user
+      where rbdbno = dbno and dbuno = uno
+      order by dbdhstaravg desc
+   </select>
+   
+</mapper>

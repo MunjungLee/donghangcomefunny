@@ -1,0 +1,24 @@
+@charset "UTF-8";
+.freeBoardList{
+			width: 1200px;
+		    margin: 0 auto;
+}
+
+.freeBoardListToolbar{
+			display: inline-block;
+}
+
+#freeBoardListSearch{
+			display: inline;
+		    position: relative;
+		    margin-left: 0px;
+		    left: 200px;
+		    right: 100px;
+}
+
+#deleteSelectFreeBoard{
+			width: 100px;
+		    position: relative;
+		    display: inline;
+		    left: 500px;
+}

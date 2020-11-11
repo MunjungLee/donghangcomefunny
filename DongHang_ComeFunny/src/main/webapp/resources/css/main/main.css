@@ -1,0 +1,668 @@
+@charset "UTF-8";
+@import url(//fonts.googleapis.com/earlyaccess/notosanskr.css); .notosanskr * { font-family: 'Noto Sans KR', sans-serif; }
+
+/* 연한파랑 rgb(115, 162, 191) */
+/* 중간파랑 rgb(93, 124, 166) */
+/* 진한파랑 rgb(3, 88, 140) */
+* {
+   padding: 0;
+   margin: 0;
+   font-family: 'Noto Sans KR', sans-serif;
+}
+
+.main-container {
+   margin: 0px auto;
+   width: 100%;
+   height: 100%;
+   /*    width: 1200px; */
+}
+
+/* a태그 속성 없애기 */
+a {
+   text-decoration: none;
+}
+
+/*******************************/
+/**         HEADER            **/
+/*******************************/
+
+/** 로고 **/
+.logo {
+   display: inline-block;
+   text-align: left;
+   /*    background-color: rgb(3, 88, 140); */
+}
+
+.logo img {
+   margin: 5px 200px;
+   width: 200px;
+   height: 70px;
+   display: inline-block;
+}
+
+
+/** 메뉴 **/
+.main_menu {
+   margin: 10px 200px;
+}
+
+.dropbtn {
+   background-color: white;
+   color: black;
+   padding: 8px 5px;
+   margin: 0px 10px;
+   font-size: 16px;
+   border: none;
+}
+
+.dropbtn>a {
+   text-decoration: none;
+   color: black;
+   padding: 8x 5px;
+}
+
+.dropbtn>a:hover {
+   text-decoration: none;
+   color: rgb(3, 88, 140);
+   font-weight: 600;
+}
+
+.dropdown {
+   position: relative;
+   display: inline-block;
+}
+
+.dropdown-content {
+   display: none;
+   text-align: center;
+   position: absolute;
+   left: -15px;
+   background-color: white;
+   min-width: 120px;
+   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.2);
+   z-index: 1;
+   transition: all 0.15s ease-in;
+}
+
+.dropdown-content>a {
+   display: block;
+   color: black;
+   padding: 12px 10px;
+   text-decoration: none;
+   transition: all 0.15s ease-in;
+}
+
+.dropdown-content a:hover {
+   background-color: #dfdfdf;
+   text-decoration: none;
+   color: black;
+   transition: all 0.15s ease-in;
+}
+
+.dropdown:hover .dropdown-content {
+   display: block;
+   opacity: 1;
+}
+
+
+/*******************************/
+/**         CONTENT1           **/
+/*******************************/
+
+/**검색창배경**/
+#main-search{
+   width: 100%;
+   height: 500px;
+/*    background-image: url("../image/han-river-3804298_1280.jpg"); */
+/*    background-image: url("../image/busan-night-scene-1747130_1280.jpg"); */
+   background-size: cover;
+   align-content: center;
+   padding-top: 125px;
+   margin-bottom: 60px;
+}   
+
+
+/*메인검색창**/
+.searchmenu{
+   position: relative;
+}
+
+.searchmenubox{
+   background-color: yellow;
+   width: 850px;
+   margin: 0 auto;
+   
+}
+
+.searchmenubox li {
+   display: inline-block;
+   width: 100px;
+   float: left;
+   text-align: center;
+}
+
+.formbox{
+   text-align: center;
+}
+
+.tapbtn{
+   display: inline-block;
+   padding: 10px 24px;
+   background-color: rgb(3, 88, 140);
+   border-radius: 5px 5px 0px 0px;
+   color: white;
+}
+
+.bgcolor{
+   background-color: rgb(93, 124, 166);
+}
+
+#bgcolor{
+   background-color: rgb(93, 124, 166);
+}
+
+.searchmenu input[type=radio]{ 
+   display: none; 
+}
+
+.searchmenu input:checked ~ .searchbox{
+     display:block;
+}
+
+.searchmenu input:checked ~ .tapbtn{
+     display:block;
+}
+
+.searchbox{
+   display:none; 
+   padding: 45px 20px 45px 26px;
+   width: 850px;
+   height: 200px;
+   text-align:left;
+   background-color: rgb(3, 88, 140);
+   position:absolute;
+    left: -200px; 
+    border-radius: 0px 5px 5px 5px;
+}
+
+.searchbox > p{
+   font-size: 25px;
+    color: white;
+    font-weight: 500;
+    padding: 0px 20px;
+}
+
+.selectbox{
+    width: 170px;
+    height: 46px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 2;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+
+#btnmargin{
+   margin-bottom: 5px;
+}
+
+.textbox{
+   display: inline-block;
+    width: 700px;
+    height: 45px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 2;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+} 
+
+#btn2margin{
+   margin-bottom: 11px;
+    margin-left: -2px;
+}
+   
+
+/*******************************/
+/**         CONTENT2         **/
+/*******************************/
+
+.ialign{
+   display: inline-block;   
+}
+
+.marginleft{
+   margin-left: 10px;   
+}
+
+.margintop{
+   margin-top: 10px;   
+}
+
+.content2{
+   width: 1000px;
+   margin: 0 auto;
+}
+
+.content2-title{
+   margin-top: 40px;
+    margin-bottom: 5px;
+}
+
+.content2-title > span{
+   display:inline-block;
+    font-size: 20px;
+    font-weight: 600;   
+}
+
+.content2-title > a{
+   float : right;
+   margin-top: 5px;
+   margin-right: 5px;
+   font-size: 15px;
+}
+
+/*함께가요 전용*/
+/**do랑  go랑 이름 잘못씀... 헷갈렸다...**/
+
+#dobest{
+   padding: 0px 6px;
+   margin-bottom: 20px;
+}
+
+.dobest{
+   display: inline-block;
+    padding: 15px;
+    margin: 10px 3px;
+    line-height: 2;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    transition: border .2s ease-in-out;
+    width: 320px;
+}
+
+.dobest-title{
+   height: 100px;
+}
+
+.dobest-title img{
+   width: 92px;
+   height: 92px;
+   display: inline-block;
+}
+
+.doprofile{
+   vertical-align: top;
+}
+
+.doname{
+   font-size: 18px;
+   font-weight: 500;
+/*    margin-bottom: 10px; */
+}
+
+.dotitle{
+   width: 180px;
+}
+
+/*함께해요 전용*/
+#gobest{
+   padding: 0px 6px;
+}
+
+.gobest{
+   display: inline-block;
+    padding: 15px;
+    margin: 10px 3px;
+    line-height: 2;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    transition: border .2s ease-in-out;
+    width: 320px;
+}
+
+
+.goprofile{
+   margin-bottom: 10px;
+   width: 288px;
+    height: 200px;
+    overflow: hidden;
+   background-color: black;
+}
+
+.goprofile img{
+   height: 100%;
+    width: 100%;
+    overflow: hidden;
+    object-fit: cover;
+   
+}
+
+.goprofile img:hover, 
+.goprofile img:hover{
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-transition: all 0.45s ease-in-out;
+  transition: all 0.45s ease-in-out;
+  opacity: 0.35;
+  transform: scale(1.13);
+  overflow: hidden;
+}
+
+
+.goname{
+   font-size: 18px;
+   font-weight: 500;
+/*    margin-bottom: 10px; */
+}
+
+.gotitle{
+   height: 40px; 
+}
+
+/*******************************/
+/**         CONTENT3          **/
+/*******************************/
+
+/*best 구분선 */
+.bestbar{
+   margin-top: 40px;
+    height: 55px;
+    text-align: center;
+}
+
+.hr{
+   width: 40%;
+   height: 1px;
+   background-color: #dfdfdf;
+   margin: 5px;
+}
+
+.bartext{
+   margin: 10px;
+   padding: 10px;
+   background-color: white;
+   font-size: 25px;
+   font-weight: bold;
+}
+
+/*content3 공통*/
+
+.content3{
+   width: 1000px;
+   margin: 0 auto;
+   margin-bottom: 70px;
+}
+
+.content3-title{
+   margin-top: 40px;
+    margin-bottom: 5px;
+}
+
+.content3-title span{
+   display:inline-block;
+    font-size: 20px;
+    font-weight: 600;   
+}
+
+
+.content3-title > a{
+   float : right;
+   margin-top: 5px;
+   margin-right: 5px;
+   font-size: 15px;
+}
+
+.rfloat{
+   float: right;
+}
+
+/*best메이트 전용*/
+
+#bestmate{
+   padding: 0px 6px;
+   text-align: center;
+}
+
+.matebest{
+   display: inline-block;
+    padding: 15px;
+    margin: 10px 3px;
+    line-height: 2;
+    background-color: #fff;
+/*     border: 1px solid #ddd; */
+/*     border-radius: 5px; */
+/*     transition: border .2s ease-in-out; */
+    width: 320px;
+}
+
+.matebest-title{
+   height: 300px;
+   width: 280px;
+}
+
+/*프로필 hover 효과*/
+.mateprofile{
+   margin-bottom: 10px;
+}
+
+.mateprofile img{
+   width: 280px;
+    height: 280px;
+    margin: 0 auto;
+    backface-visibility: hidden;
+    overflow: hidden;
+    object-fit: cover;
+}
+
+figure.mateprofile {
+  position: relative;
+  overflow: hidden;
+  width: 280px;
+  height: 280px;
+  color: #ffffff;
+  text-align: left;
+  font-size: 16px;
+  box-sizing: border-box;
+  transition: all 0.35s ease;
+}
+
+figure.mateprofile:after,
+figure.mateprofile figcaption {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+figure.mateprofile:after {
+  content: '';
+  background-color: rgba(0, 0, 0, 0.65);
+  -webkit-transition: all 0.35s ease;
+  transition: all 0.35s ease;
+  opacity: 0;
+  border-radius: 50%;
+}
+
+figure.mateprofile figcaption {
+  z-index: 1;
+  padding: 85px 40px 40px 40px; 
+  text-align: center;
+}
+
+figure.mateprofile p {
+  font-size: 18px;
+  font-weight: 300;
+  opacity: 0;
+  margin: -5px;
+}
+
+figure.mateprofile:hover:after,
+figure.mateprofile.hover:after {
+  opacity: 1;
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+}
+
+figure.mateprofile:hover p,
+figure.mateprofile.hover p {
+  -webkit-transform: translate(0px, 0px);
+  transform: translate(0px, 0px);
+  opacity: 1;
+}
+
+.matename{
+   font-size: 18px;
+   font-weight: 600;
+   margin-bottom: 10px;
+}
+
+/*best후기 전용*/
+
+#bestreview{
+   padding: 0px 7px;
+}
+
+.t1, .t2{
+   display: inline-block;
+   width: 49%;
+}
+
+.t1 > a{
+   float:right;
+}
+
+.t1{
+   margin-right: 12px;
+}
+
+.t2 > a{
+   float:right;
+}
+
+.reviewbest{
+    display: inline-block;
+    padding: 25px;
+    margin: 10px 8px;
+    line-height: 2;
+    background-color: rgba(115, 162, 191, 0.5);
+    border-radius: 5px;
+    transition: border .2s ease-in-out;
+    width: 48%;
+}
+
+.rv-titlebox{
+   width: 400px;
+    vertical-align: top;   
+}
+
+.rv-image img{
+   width:60px;   
+}
+.rv-title {
+   font-size: 24px;
+    margin-left: 10px;
+    margin-bottom: 15px;
+    float: right;
+    width: 320px;
+    line-height: 1.5em;
+    height: 80px;
+    overflow: hidden;
+    padding-top: 5px;
+}
+
+.rv-contentbox{
+   margin:5px;
+}
+
+
+
+
+
+
+
+/*******************************/
+/**         FOOTER            **/
+/*******************************/
+
+#footer {
+   border: 1px solid rgb(3, 88, 140);
+   background: rgb(3, 88, 140);
+   height: 250px;
+   width: auto;
+   min-width: 1200px;
+   margin-top: 70px;
+}
+
+/* 푸터안에 있는 메뉴 위치조정 */
+#footer .links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    font-size: 0;
+    white-space: nowrap;
+    text-align: center;
+    padding-top: 115px;
+}
+
+#footer .links li:first-child {
+    padding: 0;
+    margin: 0;
+}
+
+#footer .links li {
+    position: relative;
+    display: inline-block;
+    color: #999;
+    line-height: 18px;
+    padding-left: 14px;
+    margin-left: 14px;
+    vertical-align: top;
+}
+
+#footer .links li a {
+    color: #ffff;
+    font-size: 12px;
+    letter-spacing: -0.5px;
+}
+
+
+/* 푸터 | 구별 */
+#footer .links .footer_menu:before {
+    position: absolute;
+    top: 4px;
+    left: 0; 
+    width: 1px;
+    height: 12px;
+    background: #dcdcdc;
+   content: '|'; 
+}
+
+.main_login {
+   float: right;
+    position: absolute;
+    top: 4%;
+    right: 18.5%;
+    font-size: 16px;
+}
+.main_login a, .main_login a:hover, .main_login a:active, .main_login a:link, .main_login a:visited {
+    text-decoration: none;
+    color : black;
+}

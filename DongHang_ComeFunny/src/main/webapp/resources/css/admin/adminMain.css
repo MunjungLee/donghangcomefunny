@@ -1,0 +1,84 @@
+@charset "UTF-8";
+
+.adminMain {
+			width: 1200px;
+		    margin: 0 auto;
+		    height: 650px;
+}
+
+#adminMenuInfo {
+    height: 50%;
+    border: 1px solid;
+    position: relative;
+    left: 50%;
+    width: 40%;
+    top: 20%;
+}
+
+.menuBar {
+		    top: -30%;
+    		left: 10%;
+    		position: relative;
+}
+
+
+.mainMenu {	
+			text-align: center;
+		    list-style: none;
+		    margin: 0px;
+		    padding: 0px;
+		    position: relative;
+		    width: 15%;
+}
+
+.mainMenu li {
+	width: 180px;
+	border-top: 5px solid white;
+    background-color: rgb(189,209,234);
+}
+
+.mainMenu li:hover {
+			background-color: rgb(156,181,183);}
+
+.mainMenu li:hover > .boardMenu {
+			display:block}
+			
+.mainMenu li a {
+			text-decoration: none;
+		    display: block;
+		    width: 190px;
+		    height: 60px;
+		    line-height: 60px;
+		    font-size: 20px;
+		    color: rgb(49,86,126);
+		    padding-right: 10px;
+}
+
+.boardMenu {
+			list-style: none;
+		    display: none;
+		    position: absolute;
+		    left: 185px;
+		    top: 70px;
+			}
+			
+
+.boardMenu li { 
+			width: 184px;
+			background-color: rgb(189,209,234); 
+}
+
+.boardMenu li:first-child{
+			border-top: none;}
+
+.boardMenu li a { 
+			width: 186px;
+    		display: block;
+}
+
+span {
+	
+	font-size: 20px;
+}
+
+

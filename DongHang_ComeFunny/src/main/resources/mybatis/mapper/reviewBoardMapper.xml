@@ -1,0 +1,783 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="REVIEW">
+
+    	<insert id="insertReview">
+    		INSERT INTO tb_reviewboard
+    			(rbuno, rbtitle, rbcontent, rbwrittendate, rbdhstar, rbhoststar, rbgbno, rbdbno)
+    		VALUES
+    			(
+    			 #{rbUNo}
+    			, #{rbTitle}
+    			, #{rbContent}
+    			, sysdate
+    			, #{rbDhStar}
+    			, #{rbHostStar}
+    			, #{rbGbNo}
+    			, #{rbDbNo}
+    			)
+    	</insert>
+    	<insert id="insertFile">
+    		INSERT INTO
+    			tb_reviewfile
+    			(rfrbno, rforiginfilename, rfstoredfilename, rfsavepath, rfsize)
+    		VALUES
+    			(
+    			tb_reviewboard_seq.currval
+    			,#{originFileName}
+    			,#{storedFileName}
+    			,#{savePath}
+    			,#{fileSize}
+    			)
+    	</insert>
+
+    	<select id="selectReviewList" resultType="HashMap">
+    		SELECT * FROM
+    			( SELECT rownum rnum, UR.* FROM (
+    				SELECT
+    					u.uno, u.userid, u.unick, u.uname,
+    					r.rbno, r.rbuno, r.rbtitle, r.rbcontent, r.rbwrittendate, r.rbhitscnt
+    				FROM tb_user u, tb_reviewboard r
+    				WHERE r.rbuno = u.uno
+    					AND u.uisleave = 0
+    					AND r.rbisdel = 0
+    					ORDER BY r.rbno DESC
+    				) UR
+    			) URR
+    		WHERE rnum BETWEEN #{start} and #{end} 
+
+    	</select>
+    	
+    	<select id="selectContentCnt" resultType="int">
+    		SELECT count(*) from tb_reviewboard
+    		WHERE rbisdel = 0
+    	</select>
+    	
+    	
+    	<select id="selectReviewDetail" resultType="HashMap">
+    		SELECT * FROM 
+    			( SELECT
+    				u.uno, u.userid, u.uname, u.unick, 
+    				r.rbno, r.rbuno, r.rbtitle, r.rbcontent, r.rbwrittendate, r.rbhitscnt, r.rblikecnt, r.rbdhstar, r.rbhoststar, r.rbgbno, r.rbdbno, r.rbrecommendcnt
+    			  FROM tb_user u, tb_reviewboard r 
+    			  WHERE r.rbuno = u.uno
+    			  	AND	u.uisleave = 0
+    			  	AND r.rbisdel = 0
+    			) UR
+    		WHERE rbno = #{rbNo}
+    	</select>
+    	
+    	<select id="selectFileWithReview" resultType="HashMap">
+    		SELECT * FROM
+    			( SELECT
+    				r.rbno, r.rbuno, r.rbtitle, r.rbcontent, r.rbwrittendate, r.rbhitscnt, r.rblikecnt, r.rbdhstar, r.rbhoststar, r.rbgbno, r.rbdbno, r.rbrecommendcnt,
+    				rf.rfno, rf.rfrbno, rf.rforiginfilename, rf.rfstoredfilename, rf.rfsize, rf.rfsavepath
+    			  FROM tb_reviewboard r, tb_reviewfile rf
+    			  WHERE r.rbno = rf.rfrbno
+    			  		AND r.rbisdel = 0
+    			  		AND rf.rfisdel = 0
+    			  	ORDER BY rf.rfno DESC 
+    			) RRF
+    		WHERE rbno = #{rbNo}
+    	</select>
+    	
+<!--     	<update id="updateHit" parameterType="int"> -->
+<!--     	UPDATE tb_reviewboard -->
+<!-- 			SET rbhitscnt = rbhitscnt + 0.5 -->
+<!-- 			WHERE rbno = #{rbno} -->
+<!--     	</update> -->
+    	<update id="updateHit">
+    	UPDATE tb_reviewboard
+			SET rbhitscnt = rbhitscnt + 1
+			WHERE rbno = #{RBNO}
+				AND rbisdel = 0
+    	</update>
+    	
+    	<select id="selectReviewFile" resultType="HashMap">
+    		SELECT
+    		*
+    		FROM tb_reviewfile
+    		WHERE rfno = #{rfNo}
+    			AND rfisdel = 0
+    	</select>
+    	
+<!--     	<update id="updateFileIsDel"> -->
+<!--     		UPDATE -->
+<!--     			tb_reviewfile -->
+<!--     		SET -->
+<!--     			rfisdel = 1 -->
+<!--     		WHERE -->
+<!--     			rfno = #{rfNo} -->
+<!--     	</update> -->
+    	<delete id="deleteFile">
+    		DELETE
+    			FROM tb_reviewfile 
+    		WHERE rfno = #{rfNo}
+    	</delete>
+    	
+    	<update id="updateReview">
+    		UPDATE
+    			tb_reviewboard
+    		SET
+  				rbtitle = #{rbTitle}
+  				,rbcontent = #{rbContent}
+  				,rbdhstar = #{rbDhStar}
+  				,rbhoststar = #{rbHostStar}
+  				,rbgbno = #{rbGbNo}
+  				,rbdbno = #{rbDbNo}
+    		WHERE
+    			rbno = #{rbNo}
+    			AND rbisdel = 0
+    	</update>
+    	<insert id="modifyReviewFile">
+	   		INSERT INTO
+	   			tb_reviewfile
+	   			(rfrbno, rforiginfilename, rfstoredfilename, rfsavepath, rfsize)
+	   		VALUES
+	   			(
+	   			#{rbNo}
+	   			,#{originFileName}
+	   			,#{storedFileName}
+	   			,#{savePath}
+	   			,#{fileSize}
+	   			)
+    	</insert>
+    	
+<!--     	<update id="updateFileIsDelByRbno"> -->
+<!--     	 	UPDATE -->
+<!--     			tb_reviewfile -->
+<!--     		SET -->
+<!--     			rfisdel = 1 -->
+<!--     		WHERE -->
+<!--     			rfrbno = #{rbNo} -->
+<!--     	</update> -->
+<!--     	<update id="updateReviewBoardIsDel"> -->
+<!--     		UPDATE -->
+<!--     			tb_reviewboard -->
+<!--     		SET -->
+<!--     			rbisdel = 1 -->
+<!--     		WHERE -->
+<!--     			rbno = #{rbNo} -->
+<!--     	</update> -->
+    	<delete id="deleteReviewBoard">
+    		DELETE FROM
+    			tb_reviewboard
+    		WHERE rbno = #{rbNo}
+    	</delete>
+    	
+    	<insert id="insertReviewComment">
+	    	INSERT INTO
+	    		tb_reviewcomment(rcrbno, rcuno, rccontent, rcwrittendate)
+	    	VALUES
+	    		(
+	    		#{rcRbNo}
+	    		,#{rcUNo}
+	    		,#{rcContent}
+	    		,sysdate
+	    		)
+    	</insert>
+    	
+    	<select id="selectReviewWithCommentList" resultType = "HashMap">
+            SELECT rownum rnum, URC.* FROM
+				( SELECT
+                    u.uno, u.userid, u.unick, u.uname,
+                    rc.rcno, rc.rcrbno, rc.rcuno, rc.rccontent, rc.rcwrittendate
+                  FROM tb_user u, tb_reviewcomment rc
+                  WHERE rc.rcuno = u.uno
+                  AND rc.rcisdel = 0
+                  AND u.uisleave = 0
+                  ORDER BY rc.rcno
+                ) URC
+            WHERE rcrbno = #{rbNo}
+    	</select>
+    	
+    	<update id="updateReviewContent">
+    		UPDATE
+    			tb_reviewcomment
+    		SET
+    			rccontent = #{rcContent}
+    		WHERE rcno = #{rcNo}
+    	</update>
+    	
+<!--     	<update id="updateReviewCommentIsDEl"> -->
+<!--     		UPDATE -->
+<!--     			tb_reviewcomment -->
+<!--     		SET -->
+<!--     			rcisdel = 1 -->
+<!--     		WHERE rcno = #{rcNo} -->
+<!--     	</update> -->
+    	<delete id="deleteReviewComment">
+    		DELETE FROM
+    			tb_reviewcomment
+    		WHERE rcno = #{rcNo}
+    	</delete>
+    	
+    	<select id="selectReviewSearchCnt" resultType="int">
+			SELECT COUNT(*) FROM
+				(SELECT
+    					u.uno, u.userid, u.unick, u.uname,
+    					r.rbno, r.rbuno, r.rbtitle, r.rbcontent, r.rbwrittendate, r.rbhitscnt, r.rblikecnt, r.rbdhstar, r.rbhoststar, r.rbgbno, r.rbdbno, r.rbrecommendcnt
+    				FROM tb_user u, tb_reviewboard r
+    				WHERE r.rbuno = u.uno
+    					AND u.uisleave = 0
+    					AND r.rbisdel = 0
+    					ORDER BY r.rbno DESC
+				) UR
+			<trim prefix= "WHERE" prefixOverrides="AND">
+				<if test='searchKinds == "uNick" and searchKinds != null'>
+				AND ur.unick LIKE '%' || #{searchText} || '%'
+				</if>
+				<if test='searchKinds == "rbTitle" and searchKinds != null'>
+				AND ur.rbtitle LIKE '%' || #{searchText} || '%'
+				</if>
+				<if test='searchKinds == "rbContent" and searchKinds != null'>
+				AND ur.rbcontent LIKE '%' || #{searchText} || '%'
+				</if>
+			</trim>
+		</select>
+		
+		<select id="selectReviewSearchList" resultType="HashMap">
+			SELECT * FROM 
+				( SELECT rownum rnum, UR.* FROM
+					( SELECT
+    					u.uno, u.userid, u.unick, u.uname,
+    					r.rbno, r.rbuno, r.rbtitle, r.rbcontent, r.rbwrittendate, r.rbhitscnt, r.rblikecnt, r.rbdhstar, r.rbhoststar, r.rbgbno, r.rbdbno, r.rbrecommendcnt
+    				FROM tb_user u, tb_reviewboard r
+    				WHERE r.rbuno = u.uno
+    					AND u.uisleave = 0
+    					AND r.rbisdel = 0
+    					ORDER BY r.rbno DESC
+    				) UR
+				<trim prefix= "WHERE" prefixOverrides="OR">
+					<if test='searchKinds == "uNick" and searchKinds != null'>
+					OR ur.unick LIKE '%' || #{searchText} || '%'
+					</if>
+					<if test='searchKinds == "rbTitle" and searchKinds != null'>
+					OR ur.rbtitle LIKE '%' || #{searchText} || '%'
+					</if>
+					<if test='searchKinds == "rbContent" and searchKinds != null'>
+					OR ur.rbcontent LIKE '%' || #{searchText} || '%'
+					</if>
+				</trim>
+				) URR
+			WHERE rnum between #{paging.start} and #{paging.end}
+		</select>
+		
+		<select id="selectDongHangSearchCnt" resultType="int">
+			SELECT COUNT(*) FROM 
+				( SELECT  uno, userid, uname, unick, gd.*
+					FROM tb_user u INNER JOIN 
+				        ( SELECT * FROM
+				                ( SELECT
+				                    *
+				                  FROM tb_goapply ga, tb_goboard gb
+				                  WHERE ga.gagbno = gb.gbno
+				                  AND gb.gbstarcnt = 0
+				                  ORDER BY gbwrittendate DESC
+				                 )
+				          WHERE gauno = #{uNo}
+				          UNION ALL
+				          SELECT * FROM
+				                ( SELECT
+				                    *
+				                  FROM tb_doapply da, tb_doboard db
+				                  WHERE da.dadbno = db.dbno
+				                  AND db.dbstarcnt = 0
+				                  ORDER BY dbwrittendate DESC
+				                 )
+				          WHERE dauno = #{uNo}
+				        ) gd  
+				    on u.uno = gd.gbuno
+				) gdc
+				<trim prefix= "WHERE" prefixOverrides="AND">
+					<if test='searchDHcategory == "uNick" and searchKeyword != null'>
+					AND gdc.unick LIKE '%' || #{searchKeyword} || '%'
+					</if>
+					<if test='searchDHcategory == "gbTitle" and searchKeyword != null'>
+					AND gdc.gbtitle LIKE '%' || #{searchKeyword} || '%'
+					</if>
+				</trim>
+		</select>
+		
+		<select id="selectDongHangSearchList" resultType="HashMap">
+			SELECT * FROM (
+			SELECT rownum rnum, gdr.* FROM
+				( SELECT  uno, userid, uname, unick, gd.*
+					FROM tb_user u INNER JOIN 
+				        ( SELECT * FROM
+				                ( SELECT
+				                    *
+				                  FROM tb_goapply ga, tb_goboard gb
+				                  WHERE ga.gagbno = gb.gbno
+				                  AND gb.gbstarcnt = 0
+				                  ORDER BY gbwrittendate DESC
+				                 )
+				          WHERE gauno = #{uNo}
+				          UNION ALL
+				          SELECT * FROM
+				                ( SELECT
+				                    *
+				                  FROM tb_doapply da, tb_doboard db
+				                  WHERE da.dadbno = db.dbno
+				                  AND db.dbstarcnt = 0
+				                  ORDER BY dbwrittendate DESC
+				                 )
+				          WHERE dauno = #{uNo}
+				        ) gd  
+				    on u.uno = gd.gbuno
+				) gdr
+				<trim prefix= "WHERE" prefixOverrides="OR">
+					<if test='searchDHcategory == "uNick" and searchKeyword != null'>
+					OR gdr.unick LIKE '%' || #{searchKeyword} || '%'
+					</if>
+					<if test='searchDHcategory == "gbTitle" and searchKeyword != null'>
+					OR gdr.gbtitle LIKE '%' || #{searchKeyword} || '%'
+					</if>
+				</trim>
+				) gdrr
+				WHERE rnum between #{paging.start} and #{paging.end}
+		</select>
+		
+		<select id="selectDongHangContentCnt" resultType="int">
+			SELECT COUNT(*) FROM 
+				( SELECT  uno, userid, uname, unick, gd.*
+					FROM tb_user u INNER JOIN 
+				        ( SELECT * FROM
+				                ( SELECT
+				                    *
+				                  FROM tb_goapply ga, tb_goboard gb
+				                  WHERE ga.gagbno = gb.gbno
+				                  AND gb.gbstarcnt = 0
+				                  ORDER BY gbwrittendate DESC
+				                 )
+				          WHERE gauno = #{uNo}
+				          UNION ALL
+				          SELECT * FROM
+				                ( SELECT
+				                    *
+				                  FROM tb_doapply da, tb_doboard db
+				                  WHERE da.dadbno = db.dbno
+				                  AND db.dbstarcnt = 0
+				                  ORDER BY dbwrittendate DESC
+				                 )
+				          WHERE dauno = #{uNo}
+				        ) gd  
+				    on u.uno = gd.gbuno
+				) gdc
+		</select>
+		
+		<select id="selectDongHangList" resultType="HashMap">
+<!-- 			SELECT * FROM ( -->
+<!-- 			SELECT rownum rnum, gdr.* FROM -->
+<!-- 				( SELECT  uno, userid, uname, unick, gd.* -->
+<!-- 					FROM tb_user u INNER JOIN  -->
+<!-- 						( SELECT * FROM tb_goboard g -->
+<!-- 							WHERE gbisdel = 0 -->
+<!-- 				        	UNION ALL -->
+<!-- 				        	SELECT * FROM tb_doboard d -->
+<!-- 				        	WHERE dbisdel = 0 -->
+<!-- 				        ) gd   -->
+<!-- 				    on u.uno = gd.gbuno -->
+<!-- 				) gdr -->
+<!-- 				) gdrr -->
+<!-- 				WHERE rnum between #{paging.start} and #{paging.end} -->
+				SELECT * FROM (
+				SELECT rownum rnum, gdr.* FROM
+				( SELECT  uno, userid, uname, unick, gd.*
+				    FROM tb_user u INNER JOIN 
+				        ( SELECT * FROM
+				                ( SELECT
+				                    *
+				                  FROM tb_goapply ga, tb_goboard gb
+				                  WHERE ga.gagbno = gb.gbno
+				                  AND gb.gbstarcnt = 0
+				                  ORDER BY gbwrittendate DESC
+				                 )
+				          WHERE gauno = #{uNo}
+				          UNION ALL
+				          SELECT * FROM
+				                ( SELECT
+				                    *
+				                  FROM tb_doapply da, tb_doboard db
+				                  WHERE da.dadbno = db.dbno
+				                  AND db.dbstarcnt = 0
+				                  ORDER BY dbwrittendate DESC
+				                 )
+				          WHERE dauno = #{uNo}
+				        ) gd  
+				    on u.uno = gd.gbuno
+				) gdr
+				) gdrr
+				WHERE rnum between #{paging.start} and #{paging.end}
+		</select>
+    	
+    	<update id ="updateGoBoardStarCnt">
+    		UPDATE
+    			tb_goboard
+    		SET
+    			gbstarcnt = gbstarcnt + 1
+    		WHERE gbno = #{gbNo}
+    	</update>
+    	
+    	<select id="selectGoBoardStarCnt" resultType="int">
+			SELECT gbstarcnt FROM
+			tb_goboard
+			WHERE gbno = #{gbNo}
+    	</select>
+    	
+    	<update id="updateGoBoardStar">
+<!--     		UPDATE -->
+<!--     			tb_goboard -->
+<!--     		SET -->
+<!--     			gbdhstaravg = ROUND( ( (gbdhstaravg * (#{gbStarCnt} - 1 ) ) + #{rbDhStar} ) / #{gbStarCnt} , 1 ), -->
+<!--     			gbhoststaravg = ROUND( ( ( gbhoststaravg * (#{gbStarCnt} - 1 ) ) + #{rbHostStar} ) / #{gbStarCnt} , 1 ) -->
+<!--     		WHERE gbno = #{gbNo} -->
+    		UPDATE
+    			tb_goboard
+    		SET
+    			gbdhstaravg = ROUND( ( (gbdhstaravg * (#{gbStarCnt} - 1 ) ) + #{rbDhStar} ) / #{gbStarCnt} , 1 ),
+    			gbhoststaravg = ROUND( ( ( gbhoststaravg * (#{gbStarCnt} - 1 ) ) + #{rbHostStar} ) / #{gbStarCnt} , 1 )
+    		WHERE gbno = #{gbNo}
+    	</update>
+    	
+    	<update id ="updateDoBoardStarCnt">
+    		UPDATE
+    			tb_doboard
+    		SET
+    			dbstarcnt = dbstarcnt + 1
+    		WHERE dbno = #{gbNo}
+    	</update>
+    	
+    	<select id="selectDoBoardStarCnt" resultType="int">
+			SELECT dbstarcnt FROM
+			tb_doboard
+			WHERE dbno = #{gbNo}
+    	</select>
+    	
+    	<update id="updateDoBoardStar">
+    		UPDATE
+    			tb_doboard
+    		SET
+    			dbdhstaravg = ROUND( ( (dbdhstaravg * (#{dbStarCnt} - 1 ) ) + #{rbDhStar} ) / #{dbStarCnt} , 1 ),
+    			dbhoststaravg = ROUND( ( ( dbhoststaravg * (#{dbStarCnt} - 1 ) ) + #{rbHostStar} ) / #{dbStarCnt} , 1 )
+    		WHERE dbno = #{gbNo}
+    	</update>
+    	
+    	<select id="selectGoBoardView" resultType="HashMap">
+    		SELECT
+    			gbno AS DHNO, gbtitle AS DHTITLE, gbcategory AS DHCATEGORY, gbdhstaravg AS DHDHSTARAVG, gbhoststaravg AS DHHOSTSTARAVG, gbstarcnt AS DHSTARCNT 
+    		FROM
+    			tb_goboard
+    		WHERE gbno = #{rbGbNo}
+    	</select>
+    	
+    	<select id="selectDoBoardView" resultType="HashMap">
+    		SELECT
+    			dbno AS DHNO, dbtitle AS DHTITLE, dbcategory AS DHCATEGORY, dbdhstaravg AS DHDHSTARAVG, dbhoststaravg AS DHHOSTSTARAVG, dbstarcnt AS DHSTARCNT
+    		FROM
+    			tb_doboard
+    		WHERE dbno = #{rbDbNo}
+    	</select>
+    	
+    	<select id="selectGoBoardStarCntBefore" resultType="int">
+    		SELECT gbstarcnt FROM
+				tb_goboard
+			WHERE gbno = #{beforeGbNo}
+    	</select>
+    	
+    	<update id="updateGoBoardStarBefore">
+    		UPDATE
+    			tb_goboard
+    		SET
+    			<if test='beforeGbStarCnt != "1"'>
+    			gbdhstaravg = ROUND( ( ( gbdhstaravg * #{beforeGbStarCnt} ) - #{beforeRbDhStar} ) / (#{beforeGbStarCnt} - 1 ) , 1 ),
+    			gbhoststaravg = ROUND( ( ( gbhoststaravg * #{beforeGbStarCnt} ) - #{beforeRbHostStar} ) / (#{beforeGbStarCnt} - 1) , 1 )
+    			</if>
+    			<if test='beforeGbStarCnt == "1"'>
+    			gbdhstaravg = ROUND( ( ( gbdhstaravg * #{befroeGbStarCnt} ) - #{beforeRbDhStar} ) , 1 ),
+    			gbhoststaravg = ROUND( ( ( gbhoststaravg * #{beforeGbStarCnt} ) - #{beforeRbHostStar} ) , 1 )
+    			</if>
+    		WHERE gbno = #{befroeGbNo}
+    	</update>
+    	
+    	<update id="updateGoBoardStarAfter">
+    	    UPDATE
+    			tb_goboard
+    		SET
+    			<if test='gbStarCnt != "0"'>
+    			gbdhstaravg = ROUND( ( ( gbdhstaravg * (#{gbStarCnt} - 1 ) ) + #{rbDhStar} ) / #{gbStarCnt} , 1 ),
+    			gbhoststaravg = ROUND( ( ( gbhoststaravg * (#{gbStarCnt} - 1) ) + #{rbHostStar} ) / #{gbStarCnt} , 1 )
+    			</if>
+    			<if test='gbStarCnt == "0"'>
+    			gbdhstaravg = ROUND( #{rbDhStar}, 1 ),
+    			gbhoststaravg = ROUND( #{rbHostStar}, 1 )
+    			</if>
+    		WHERE gbno = #{gbNo}
+    	</update>
+    	
+    	<select id="selectDoBoardStarCntBefore" resultType="int">
+    		SELECT dbstarcnt FROM
+				tb_doboard
+			WHERE dbno = #{beforeGbNo}
+    	</select>
+    	
+    	<update id="updateDoBoardStarBefore">
+    		UPDATE
+    			tb_doboard
+    		SET
+    			<if test='beforeDbStarCnt != "1"'>
+    			dbdhstaravg = ROUND( ( ( dbdhstaravg * #{beforeDbStarCnt} ) - #{beforeRbDhStar} ) / (#{beforeDbStarCnt} - 1 ) , 1 ),
+    			dbhoststaravg = ROUND( ( ( dbhoststaravg * (#{beforeDbStarCnt} ) ) - #{beforeRbHostStar} ) / (#{beforeDbStarCnt} - 1) , 1 )
+    			</if>
+    			<if test='beforeDbStarCnt == "1"'>
+    			dbdhstaravg = ROUND( ( ( dbdhstaravg * #{beforeDbStarCnt} ) - #{beforeRbDhStar} ), 1 ),
+    			dbhoststaravg = ROUND( ( ( dbhoststaravg * (#{beforeDbStarCnt} ) ) - #{beforeRbHostStar} ), 1 )
+    			</if>
+    		WHERE dbno = #{befroeGbNo}
+    	</update>
+    	
+    	<update id="updateDoBoardStarAfter">
+    		UPDATE
+    			tb_doboard
+    		SET
+    			<if test='dbStarCnt != "0"'>
+    			dbdhstaravg = ROUND( ( (dbdhstaravg * (#{dbStarCnt} - 1 ) ) + #{rbDhStar} ) / #{dbStarCnt} , 1 ),
+    			dbhoststaravg = ROUND( ( ( dbhoststaravg * (#{dbStarCnt} - 1) ) + #{rbHostStar} ) / #{dbStarCnt} , 1 )
+    			</if>
+    			<if test='dbStarCnt == "0"'>
+    			dbdhstaravg = ROUND( #{rbDhStar}, 1 ),
+    			dbhoststaravg = ROUND( #{rbHostStar}, 1 )
+    			</if>
+    			
+    		WHERE dbno = #{gbNo}
+    	</update>
+    	
+    	<update id="updateReviewGoBoardNo">
+    		UPDATE
+    			tb_reviewboard
+    		SET
+    			rbgbno = #{gbNo},
+    			rbdbno = 0
+    		WHERE
+    			rbNo = #{rbNo}
+    	</update>
+
+    	<update id="updateReviewDoBoardNo">
+    		UPDATE
+    			tb_reviewboard
+    		SET
+    			rbgbno = 0,
+    			rbdbno = #{gbNo}
+    		WHERE
+    			rbNo = #{rbNo}
+    	</update>
+    	
+    	<insert id="insertReviewLike">
+    		INSERT INTO
+    			tb_reviewlike (rlrbno, rluno)
+    		VALUES
+    			(#{rlRbNo}, #{rlUNo})
+    	</insert>
+    	
+    	<update id="updateReviewBoardLikeCnt">
+    		UPDATE 
+    			tb_reviewboard
+    		SET
+    			rblikecnt = ( SELECT COUNT(*) FROM tb_reviewlike WHERE rlrbno = #{rlRbNo})
+    		WHERE rbno = #{rlRbNo}
+    	</update>
+    	
+    	<delete id="deleteReviewLike">
+    		DELETE FROM
+    			tb_reviewlike
+    		WHERE rlrbno = #{rlRbNo} 
+    			AND rluno = #{rlUNo}
+    	</delete>
+    	
+    	<select id = "getBoardLike" resultType="int">
+    		SELECT COUNT(*) 
+    			FROM tb_reviewlike 
+    		WHERE rlrbno = #{rlRbNo}
+    			AND rluno = #{rlUNo}
+    	</select>
+    	
+    	<insert id="insertReviewRec">
+    		INSERT INTO
+    			tb_reviewrecommend (rrcrbno, rrcuno)
+    		VALUES
+    			(#{rrcRbNo}, #{rrcUNo})
+    	</insert>
+    	
+    	<update id="updateReviewBoardRecCnt">
+    		UPDATE 
+    			tb_reviewboard
+    		SET
+    			rbrecommendcnt = ( SELECT COUNT(*) FROM tb_reviewrecommend WHERE rrcrbno = #{rrcRbNo})
+    		WHERE rbno = #{rrcRbNo}
+    	</update>
+    	
+    	<delete id="deleteReviewRec">
+    		DELETE FROM
+    			tb_reviewrecommend
+    		WHERE rrcrbno = #{rrcRbNo} 
+    			AND rrcuno = #{rrcUNo}
+    	</delete>
+    	
+    	<select id = "getBoardRec" resultType="int">
+    		SELECT COUNT(*) 
+    			FROM tb_reviewrecommend 
+    		WHERE rrcrbno = #{rrcRbNo}
+    			AND rrcuno = #{rrcUNo}
+    	</select>
+    	
+    	<select id = "selectDHApplyList" resultType="int">
+    		SELECT COUNT(*) FROM 
+			    (SELECT  uno, userid, uname, unick, gd.*
+			        FROM tb_user u INNER JOIN 
+			            ( SELECT * FROM
+			                    ( SELECT
+			                        *
+			                      FROM tb_goapply ga, tb_goboard gb
+			                      WHERE ga.gagbno = gb.gbno
+			                      AND gb.gbstarcnt = 0
+			                      ORDER BY gbwrittendate DESC
+			                     )
+			              WHERE gauno = #{uNo}
+			              UNION ALL
+			              SELECT * FROM
+			                    ( SELECT
+			                        *
+			                      FROM tb_doapply da, tb_doboard db
+			                      WHERE da.dadbno = db.dbno
+			                      AND db.dbstarcnt = 0
+			                      ORDER BY dbwrittendate DESC
+			                     )
+			              WHERE dauno = #{uNo}
+			            ) gd  
+			        on u.uno = gd.gbuno )
+    	</select>
+    	
+    	<select id = "selectReviewNo" resultType="int">
+    		SELECT MAX(rbno) FROM
+    			tb_reviewboard
+    		WHERE rbuno = #{rbUNo}
+    		
+    	</select>
+    	<select id = "selectReviewGbAvg" resultType="HashMap">
+			SELECT ROUND(AVG(rbdhstar), 1) AS RBDHSTARAVG, ROUND(AVG(rbhoststar), 1) AS RBHOSTSTARAVG FROM
+    			tb_reviewboard
+    		WHERE rbgbno = #{gbNo}
+    	</select>
+    	<select id = "selectReviewDbAvg" resultType="HashMap">
+			SELECT ROUND(AVG(rbdhstar), 1) AS RBDHSTARAVG, ROUND(AVG(rbhoststar), 1) AS RBHOSTSTARAVG FROM
+    			tb_reviewboard
+    		WHERE rbdbno = #{gbNo}
+    	</select>
+    	
+    	<update id = "updateGoAvg">
+    		UPDATE
+    			tb_goboard
+    		SET
+    			gbdhstaravg = #{RBDHSTARAVG},
+    			gbhoststaravg = #{RBHOSTSTARAVG},
+    			gbstarcnt = 1
+    		WHERE gbno = #{gbNo}
+    	</update>
+    	
+    	<update id = "updateDoAvg">
+    		UPDATE
+    			tb_doboard
+    		SET
+    			dbdhstaravg = #{RBDHSTARAVG},
+    			dbhoststaravg = #{RBHOSTSTARAVG},
+    			dbstarcnt = 1
+    		WHERE dbno = #{gbNo}
+    	</update>
+    	
+    	<select id = "selectReviewBoardByRbGbNo" resultType="int">
+    		SELECT COUNT(*) FROM
+    			tb_reviewboard
+    		WHERE rbgbno = #{gbNo}
+    	</select>
+    	
+    	<select id = "selectReviewBoardByRbDbNo" resultType="int">
+    		SELECT COUNT(*) FROM
+    			tb_reviewboard
+    		WHERE rbdbno = #{gbNo}
+    	</select>
+    	
+    	<update id="updateGoAvgByZero">
+    		UPDATE
+    			tb_goboard
+    		SET
+    			gbdhstaravg = #{RBDHSTARAVG},
+    			gbhoststaravg = #{RBHOSTSTARAVG},
+    			gbstarcnt = 0
+    		WHERE gbno = #{gbNo}
+    	</update>
+    	
+    	<update id="updateDoAvgByZero">
+    		UPDATE
+    			tb_doboard
+    		SET
+    			dbdhstaravg = #{RBDHSTARAVG},
+    			dbhoststaravg = #{RBHOSTSTARAVG},
+    			dbstarcnt = 0
+    		WHERE dbno = #{gbNo}
+    	</update>
+    	
+    	<update id="updateDhtCnt">
+    		UPDATE
+    			tb_user
+    		SET
+    			udhtcnt = udhtcnt -1
+    		WHERE uno = #{uNo}
+    	</update>
+    	
+    	<insert id="insertReviewDht">
+    		INSERT INTO tb_reviewdhticket(dhtrbno, dhtuno, dhtstatus, dhtuseddate)
+    		VALUES (#{dhtRbNo}, #{dhtUNo}, 1, sysdate )
+    	</insert>
+    	
+    	<select id="selectReviewDhtCnt" resultType="int">
+    		SELECT COUNT(*)
+    			FROM tb_reviewdhticket
+    		WHERE dhtrbno = #{dhtRbNo}
+    			AND dhtuno = #{dhtUNo}
+    	</select>
+    	
+    	<select id="selectReivewDht" resultType="HashMap">
+    		SELECT * FROM tb_reviewdhticket
+    		WHERE dhtuno = #{uNo}
+    	</select>
+    	
+    	<select id="selectGoCnt" resultType="int">
+    		SELECT COUNT(*)
+    			FROM tb_goboard
+    		WHERE gbno = #{gbNo}
+    			AND gbuno = #{gbUNo}
+    	</select>
+    	<select id="selectGaCnt" resultType="int">
+    		SELECT COUNT(*)
+    			FROM tb_goapply
+    		WHERE gagbno = #{gaGbNo}
+    			AND gauno = #{gaUNo}
+    	</select>
+    	<select id="selectDoCnt" resultType="int">
+    		SELECT COUNT(*)
+    			FROM tb_doboard
+    		WHERE dbno = #{dbNo}
+    			AND dbuno = #{dbUNo}
+    	</select>
+    	<select id="selectDaCnt" resultType="int">
+    		SELECT COUNT(*)
+    			FROM tb_doapply
+    		WHERE dadbno = #{daDbNo}
+    			AND dauno = #{daUNo}    		
+    	</select>
+    	
+
+</mapper>

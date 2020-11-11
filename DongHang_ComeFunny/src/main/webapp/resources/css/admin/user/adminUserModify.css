@@ -1,0 +1,32 @@
+@charset "UTF-8";
+
+.userModify {
+			width: 1200px;
+		    margin: 0 auto; 
+}
+
+.userInfoTable {
+			width: 700px;
+   			text-align: center;
+    		table-layout: fixed;
+    		text-align-last : center;
+    		height: 500px;
+   			font-size: 25px;
+   			display: inline-table;
+			}
+			
+#userImage{
+			width: 400px;
+			height: 400px;
+			float: right;
+			margin-top: 50px;
+}
+
+.userModifyToolbar{
+			width: 100px;
+			text-align: center;}
+			
+input {
+    width: 231px;
+    border: none;
+}

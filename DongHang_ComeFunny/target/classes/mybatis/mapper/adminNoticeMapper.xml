@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+	<mapper namespace="AdminNotice">
+	<select id="selectNoticeCnt" resultType="int">
+		SELECT COUNT(*) FROM tb_noticeboard
+		<trim prefix= "WHERE" prefixOverrides="AND">
+				<if test='searchKinds == "nbTitle" and searchKinds != null'>
+				AND nbtitle LIKE '%' || #{searchText} || '%'
+				</if>
+				<if test='searchKinds == "nbWrittenDate" and searchKinds != null'>
+				AND nbwrittendate LIKE '%' || #{searchText} || '%'
+				</if>
+			</trim>
+	</select>
+
+
+	<select id="selectNoticeList" resultType="NOTICE">
+		 	SELECT nbno, nbtitle, nbwrittendate, nbhitscnt, nbisdel FROM (
+			SELECT rownum rnum,n1. *FROM(
+			SELECT * FROM tb_noticeboard ORDER BY nbno DESC) n1 
+			<trim prefix= "WHERE" prefixOverrides="OR">
+				<if test='searchKinds == "nbTitle" and searchKinds != null'>
+				OR nbtitle LIKE '%' || #{searchText} || '%'
+				</if>
+				<if test='searchKinds == "nbWrittenDate" and searchKinds != null'>
+				OR nbwrittendate LIKE '%' || #{searchText} || '%'
+				</if>
+			</trim>
+			)
+			WHERE rnum between #{paging.start} and #{paging.end}
+	
+	</select>
+	
+	<delete id="deleteNotice">
+			DELETE tb_noticeboard
+			WHERE nbno = #{nbNo}
+	</delete>
+	
+	<delete id="deleteNoticeImg">
+			DELETE tb_noticeimg
+			WHERE ninbno=#{nbNo}
+	</delete>
+	
+	<delete id="deleteNoticeFile">
+			DELETE tb_noticefile
+			WHERE nfnbno=#{nbNo}
+	</delete>
+	
+	<insert id="insertNotice" parameterType="NOTICE">
+			INSERT INTO tb_noticeboard
+			(nbtitle, nbcontent)
+			VALUES
+			(#{nbTitle}, #{nbContent})
+	</insert>
+	
+	<select id="selectWriteNbNo" resultType="int">
+			SELECT tb_noticeboard_seq.CURRVAL 
+			FROM DUAL
+	</select>
+	
+	<insert id="insertNoticeFile">
+			INSERT INTO tb_noticefile
+			(nfnbno, nforiginfilename, nfstoredfilename, nfsize, nfsavepath)
+			VALUES
+			(#{nfNbNo}, #{originFileName}, #{storedFileName}, #{fileSize}, #{savePath})
+	</insert>
+	
+	<select id="selectNoticeByNbNo" resultType="NOTICE">
+			SELECT 	nbno, nbtitle, nbcontent, nbwrittendate, nbhitscnt FROM tb_noticeboard
+			WHERE nbno = #{nbNo}
+	</select>
+	
+	<select id="selectNoticeFileByNbNo" resultType="NOTICEFILE">
+			SELECT nfno, nforiginfilename, nfstoredfilename, nfsize, nfsavepath FROM tb_noticefile
+			WHERE nfnbno = #{nbNo} 
+	</select>
+	
+	<update id="updateNotice" parameterType="NOTICE">
+		UPDATE tb_noticeboard
+			<set>
+				nbtitle = #{nbTitle},
+				nbcontent = #{nbContent}
+			</set>
+			WHERE nbno = #{nbNo}
+	</update>
+	
+	<select id="selectFile" resultType="HashMap">
+		SELECT
+    		*
+    		FROM tb_noticefile
+    		WHERE nfno = #{nfNo}
+	</select>
+	
+	<delete id="deleteFile">
+		DELETE FROM 
+    			tb_noticefile 
+    		WHERE nfno = #{nfNo}
+	</delete>
+	</mapper>

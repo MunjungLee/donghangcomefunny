@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="FREE">
+
+    	<insert id="insertFree">
+    		INSERT INTO tb_freeboard
+    			(fbuno, fbtitle, fbcontent, fbwrittendate)
+    		VALUES
+    			(
+    			 #{fbUNo}
+    			, #{fbTitle}
+    			, #{fbContent}
+    			, sysdate
+    			)
+    	</insert>
+    	<insert id="insertFile">
+    		INSERT INTO
+    			tb_freefile
+    			(fffbno, fforiginfilename, ffstoredfilename, ffsavepath, ffsize)
+    		VALUES
+    			(
+    			tb_freeboard_seq.currval
+    			,#{originFileName}
+    			,#{storedFileName}
+    			,#{savePath}
+    			,#{fileSize}
+    			)
+    	</insert>
+
+    	<select id="selectFreeList" resultType="HashMap">
+    		SELECT * FROM
+    			( SELECT rownum rnum, UF.* FROM (
+    				SELECT
+    					u.uno, u.userid, u.unick, u.uname,
+    					f.fbno, f.fbuno, f.fbtitle, f.fbcontent, f.fbwrittendate, f.fbhitscnt
+    				FROM tb_user u, tb_freeboard f
+    				WHERE f.fbuno = u.uno
+    					AND u.uisleave = 0
+    					AND f.fbisdel = 0
+    					ORDER BY f.fbno DESC
+    				) UF
+    			) UFR
+    		WHERE rnum BETWEEN #{start} and #{end} 
+
+    	</select>
+    	
+    	<select id="selectContentCnt" resultType="int">
+    		SELECT count(*) from tb_freeboard
+    		WHERE fbisdel = 0
+    	</select>
+    	
+    	
+    	<select id="selectFreeDetail" resultType="HashMap">
+    		SELECT * FROM 
+    			( SELECT
+    				u.uno, u.userid, u.uname, u.unick, 
+    				f.fbno, f.fbuno, f.fbtitle, f.fbcontent, f.fbwrittendate, f.fbhitscnt
+    			  FROM tb_user u, tb_freeboard f 
+    			  WHERE f.fbuno = u.uno
+    			  	AND	u.uisleave = 0
+    			  	AND f.fbisdel = 0
+    			) UF
+    		WHERE fbno = #{fbNo}
+    	</select>
+    	
+    	<select id="selectFileWithFree" resultType="HashMap">
+    		SELECT * FROM
+    			( SELECT
+    				f.fbno, f.fbuno, f.fbtitle, f.fbcontent, f.fbwrittendate, f.fbhitscnt,
+    				ff.ffno, ff.fffbno, ff.fforiginfilename, ff.ffstoredfilename, ff.ffsize, ff.ffsavepath
+    			  FROM tb_freeboard f, tb_freefile ff
+    			  WHERE f.fbno = ff.fffbno
+    			  		AND f.fbisdel = 0
+    			  		AND ff.ffisdel = 0
+    			  	ORDER BY ff.ffno DESC 
+    			) FFF
+    		WHERE fbno = #{fbNo}
+    	</select>
+    	
+<!--     	<update id="updateHit" parameterType="int"> -->
+<!--     	UPDATE tb_freeboard -->
+<!-- 			SET fbhitscnt = fbhitscnt + 0.5 -->
+<!-- 			WHERE fbno = #{fbno} -->
+<!--     	</update> -->
+    	<update id="updateHit">
+    	UPDATE tb_freeboard
+			SET fbhitscnt = fbhitscnt + 1
+			WHERE fbno = #{FBNO}
+				AND fbisdel = 0
+    	</update>
+    	
+    	<select id="selectFreeFile" resultType="HashMap">
+    		SELECT
+    		*
+    		FROM tb_freefile
+    		WHERE ffno = #{ffNo}
+    			AND ffisdel = 0
+    	</select>
+    	
+<!--     	<update id="updateFileIsDel"> -->
+<!--     		UPDATE -->
+<!--     			tb_freefile -->
+<!--     		SET -->
+<!--     			ffisdel = 1 -->
+<!--     		WHERE -->
+<!--     			ffno = #{ffNo} -->
+<!--     	</update> -->
+    	<delete id="deleteFile">
+    		DELETE FROM 
+    			tb_freefile 
+    		WHERE ffno = #{ffNo}
+    	</delete>
+    	
+    	<update id="updateFree">
+    		UPDATE
+    			tb_freeboard
+    		SET
+  				fbtitle = #{fbTitle},
+  				fbcontent = #{fbContent}
+    		WHERE
+    			fbno = #{fbNo}
+    			AND fbisdel = 0
+    	</update>
+    	<insert id="modifyFreeFile">
+	   		INSERT INTO
+	   			tb_freefile
+	   			(fffbno, fforiginfilename, ffstoredfilename, ffsavepath, ffsize)
+	   		VALUES
+	   			(
+	   			#{fbNo}
+	   			,#{originFileName}
+	   			,#{storedFileName}
+	   			,#{savePath}
+	   			,#{fileSize}
+	   			)
+    	</insert>
+    	
+    	<update id="updateFileIsDelByFbno">
+    	 	UPDATE
+    			tb_freefile
+    		SET
+    			ffisdel = 1
+    		WHERE
+    			fffbno = #{fbNo}
+    	</update>
+<!--     	<update id="updateFreeBoardIsDel"> -->
+<!--     		UPDATE -->
+<!--     			tb_freeboard -->
+<!--     		SET -->
+<!--     			fbisdel = 1 -->
+<!--     		WHERE -->
+<!--     			fbno = #{fbNo} -->
+<!--     	</update> -->
+    	<delete id="deleteFreeBoard">
+    		DELETE FROM
+    			tb_freeboard
+    		WHERE fbno = #{fbNo}
+    	</delete>
+    	
+    	<insert id="insertFreeComment">
+	    	INSERT INTO
+	    		tb_freecomment(fcfbno, fcuno, fccontent, fcwrittendate)
+	    	VALUES
+	    		(
+	    		#{fcFbNo}
+	    		,#{fcUNo}
+	    		,#{fcContent}
+	    		,sysdate
+	    		)
+    	</insert>
+    	
+    	<select id="selectFreeWithCommentList" resultType = "HashMap">
+            SELECT rownum rnum, UFC.* FROM
+				( SELECT
+                    u.uno, u.userid, u.unick, u.uname,
+                    fc.fcno, fc.fcfbno, fc.fcuno, fc.fccontent, fc.fcwrittendate
+                  FROM tb_user u, tb_freecomment fc
+                  WHERE fc.fcuno = u.uno
+                  AND fc.fcisdel = 0
+                  AND u.uisleave = 0
+                  ORDER BY fc.fcno
+                ) UFC
+            WHERE fcfbno = #{fbNo}
+    	</select>
+    	
+    	<update id="updateFreeContent">
+    		UPDATE
+    			tb_freecomment
+    		SET
+    			fccontent = #{fcContent}
+    		WHERE fcno = #{fcNo}
+    	</update>
+    	
+<!--     	<update id="updateFreeCommentIsDEl"> -->
+<!--     		UPDATE -->
+<!--     			tb_freecomment -->
+<!--     		SET -->
+<!--     			fcisdel = 1 -->
+<!--     		WHERE fcno = #{fcNo} -->
+<!--     	</update> -->
+    	<delete id="deleteFreeComment">
+    		DELETE FROM	tb_freecomment
+    		WHERE fcno = #{fcNo}
+    	</delete>
+    	
+    	<select id="selectFreeSearchCnt" resultType="int">
+			SELECT COUNT(*) FROM
+				(SELECT
+    					u.uno, u.userid, u.unick, u.uname,
+    					f.fbno, f.fbuno, f.fbtitle, f.fbcontent, f.fbwrittendate, f.fbhitscnt
+    				FROM tb_user u, tb_freeboard f
+    				WHERE f.fbuno = u.uno
+    					AND u.uisleave = 0
+    					AND f.fbisdel = 0
+    					ORDER BY f.fbno DESC
+				) UF
+			<trim prefix= "WHERE" prefixOverrides="AND">
+				<if test='searchKinds == "uNick" and searchKinds != null'>
+				AND uf.unick LIKE '%' || #{searchText} || '%'
+				</if>
+				<if test='searchKinds == "fbTitle" and searchKinds != null'>
+				AND uf.fbtitle LIKE '%' || #{searchText} || '%'
+				</if>
+				<if test='searchKinds == "fbContent" and searchKinds != null'>
+				AND uf.fbcontent LIKE '%' || #{searchText} || '%'
+				</if>
+			</trim>
+		</select>
+		
+		<select id="selectFreeSearchList" resultType="HashMap">
+			SELECT * FROM 
+				( SELECT rownum rnum, UF.* FROM
+					( SELECT
+    					u.uno, u.userid, u.unick, u.uname,
+    					f.fbno, f.fbuno, f.fbtitle, f.fbcontent, f.fbwrittendate, f.fbhitscnt
+    				FROM tb_user u, tb_freeboard f
+    				WHERE f.fbuno = u.uno
+    					AND u.uisleave = 0
+    					AND f.fbisdel = 0
+    					ORDER BY f.fbno DESC
+    				) UF
+				<trim prefix= "WHERE" prefixOverrides="OR">
+					<if test='searchKinds == "uNick" and searchKinds != null'>
+					OR uf.unick LIKE '%' || #{searchText} || '%'
+					</if>
+					<if test='searchKinds == "fbTitle" and searchKinds != null'>
+					OR uf.fbtitle LIKE '%' || #{searchText} || '%'
+					</if>
+					<if test='searchKinds == "fbContent" and searchKinds != null'>
+					OR uf.fbcontent LIKE '%' || #{searchText} || '%'
+					</if>
+				</trim>
+				) UFR
+			WHERE rnum between #{paging.start} and #{paging.end}
+		</select>
+    	
+
+</mapper>

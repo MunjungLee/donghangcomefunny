@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+   <mapper namespace="AdminOrder">
+   
+   <select id="selectOrderCnt" resultType="int">
+      SELECT COUNT(*) FROM (
+         SELECT o.* FROM tb_order o, tb_user u
+         WHERE u.uno = o.ouno
+         <if test="searchKinds == 'buyer' and searchKinds != null">
+         AND u.unick LIKE '%' || #{searchText} || '%'
+         </if>
+      ) so
+         <trim prefix= "WHERE" prefixOverrides="AND">
+            <if test='searchKinds == "oName" and searchKinds != null'>
+            AND oname LIKE '%' || #{searchText} || '%'
+            </if>
+            <if test='searchKinds == "oDate" and searchKinds != null'>
+            AND odate LIKE '%' || #{searchText} || '%'
+            </if>
+         </trim>
+   </select>
+   
+   <select id="selectOrderList" resultMap="ORDERLIST">
+      SELECT pono, ouno, oimpuid, omerchantuid, oname, oqunatity, oprice, odate, oisdel, unick FROM (
+         SELECT rownum rnum, o1.* FROM (
+         SELECT * FROM tb_order o, tb_user u WHERE u.uno = o.ouno ORDER BY o.ouno DESC) o1 
+         <trim prefix= "WHERE" prefixOverrides="OR">
+            <if test='searchKinds == "uNick" and searchKinds != null'>
+            OR uncik LIKE '%' || #{searchText} || '%'
+            </if>
+            <if test='searchKinds == "oName" and searchKinds != null'>
+            OR oname LIKE '%' || #{searchText} || '%'
+            </if>
+            <if test='searchKinds == "oDate" and searchKinds != null'>
+            OR odate LIKE '%' || #{searchText} || '%'
+            </if>
+         </trim>
+         )
+         WHERE rnum between #{paging.start} and #{paging.end}
+   </select>
+   
+   <select id="selectOrderByPoNo" resultMap="ORDERLIST">
+      SELECT o.*, u.unick FROM tb_order o, tb_user u
+         WHERE o.ouno = u.uno 
+         AND o.pono = #{pONo}
+   </select>
+   
+   <resultMap type="com.DongHang_ComeFunny.www.model.vo.Order" id="ORDERLIST">
+          <result property="pONo" column="pono"/>
+          <result property="oUNo" column="ouno"/>
+          <result property="oImpUid" column="oimpuid"/>
+          <result property="oMerChantUid" column="omerchantuid"/>
+          <result property="oName" column="oname"/>
+          <result property="oQunatity" column="oqunatity"/>
+          <result property="oPrice" column="oprice"/>
+          <result property="oDate" column="odate"/>
+          <result property="oisdel" column="oisdel"/>
+          <result property="buyer" column="unick"/>
+       </resultMap>
+       
+       
+   </mapper>

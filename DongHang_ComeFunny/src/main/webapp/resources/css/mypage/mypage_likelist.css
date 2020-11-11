@@ -1,0 +1,214 @@
+@charset "UTF-8";
+/* 
+* {
+	padding: 0;
+	margin: 0;
+}
+
+.likecontainer {
+	margin: 5px 23px;
+   	height: 290px;
+    width: 560px;
+}
+
+.likebox {
+  	margin: 4px 11px;
+    width: 110px;
+    height: 135px;
+    display: inline-block;
+}
+
+.like_img_box {
+    display: inline-block;
+    border-radius: 100%;
+    border: 1px solid #ccc;
+    width: 110px;
+    height: 110px;
+}
+
+.like_img {
+	width: 110px;
+    height: 110px;
+    border-radius: 100%;
+}
+
+.like_cancel {
+	margin-left: 50px;
+}
+
+#likebtndelete {
+	background-color: rgb(3, 88, 140);
+    border-radius: 3px;
+    border-width: 0px;
+    border-style: none;
+    color: #ffffff;
+    width: 45px;
+    height: 24px;
+    display: inline-block;
+    font-size: 13px;
+    padding: 2px;
+    text-align: center;
+    margin-left: 428px;
+}
+
+
+
+
+ */
+
+
+
+
+
+* {
+	padding: 0;
+	margin: 0;
+}
+
+.likecontainer {
+	margin: 5px 23px;
+   	height: 290px;
+    width: 560px;
+  
+}
+
+.likebox {
+  	margin: 4px 11px;
+    width: 110px;
+    height: 135px;
+    display: inline-block;
+}
+
+.like_img_box {
+    display: inline-block;
+    border-radius: 100%;
+    border: 1px solid #ccc;
+    width: 110px;
+    height: 110px;
+  
+    position: relative;
+    overflow: hidden;
+    color: #ffffff;
+    text-align: left;
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: all 0.35s ease;
+}
+
+.like_img {
+	width: 110px;
+    height: 110px;
+    border-radius: 100%;
+  	backface-visibility: hidden;
+  	vertical-align: top;
+}
+
+.like_img_box:after,
+.like_img_box figcaption {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-radius: 100%;
+  margin: 0px;
+}
+
+.like_img_box:after {
+  content: '';
+  background-color: rgba(0, 0, 0, 0.65);
+  -webkit-transition: all 0.35s ease;
+  transition: all 0.35s ease;
+  opacity: 0;
+}
+
+.like_img_box figcaption {
+  z-index: 1;
+  padding: 20px;
+  text-align: center;
+}
+
+.like_img_box p {
+  font-size: 5px;
+  font-weight: 250px;
+  letter-spacing: 1px;
+  opacity: 0;
+  width: 70px;
+  height: 70px;
+  margin: 0 auto;
+  text-align: center;
+  vertical-align: center;
+}
+
+.like_img_box:hover:after,
+.like_img_box.hover:after {
+  opacity: 1;
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 00px;
+  right: 0px;
+}
+
+.like_img_box:hover p,
+.like_img_box.hover p {
+  -webkit-transform: translate(0px, 0px);
+  transform: translate(0px, 0px);
+  opacity: 1;
+}
+
+
+/* 찜목록 삭제 버튼 */
+.like_cancel {
+	margin-left: 50px;
+}
+
+#likebtndelete {
+	background-color: rgb(3, 88, 140);
+    border-radius: 3px;
+    border-width: 0px;
+    border-style: none;
+    color: #ffffff;
+    width: 45px;
+    height: 24px;
+    display: inline-block;
+    font-size: 13px;
+    padding: 2px;
+    text-align: center;
+    margin-left: 428px;
+}
+
+.like_cancel {
+	border: none;
+	background: none; 
+}
+
+.like_cancel:focus { 
+	outline:none;
+}
+
+#my_info4 {
+	background-color: rgb(255, 255, 255);
+    border-radius: 7px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(224, 224, 224);
+    width:	600px;
+    height: 370px;
+    margin: 0% auto;
+}
+
+/* 스위치 버튼 */
+#likeBtn{
+	margin: 0% 15%;
+    margin-bottom: 3%;
+}
+#likeBtn img{
+	width: 23%;
+}
+
+#mypage{
+	min-height: 493px;
+    min-width: 750px;
+	
+}
